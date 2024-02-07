@@ -4,9 +4,13 @@
 #include "Bullet.h"
 #include <assert.h>
 
+/// <summary>
+/// 銃
+/// </summary>
 Gun::Gun()
 {
 	hModel = MV1LoadModel("data/Gun/Gun.mv1");
+
 	player = ObjectManager::FindGameObject<Player>();
 	assert(player != nullptr);
 
@@ -25,16 +29,21 @@ Gun::~Gun()
 
 void Gun::Update()
 {
+	//カメラを中心にして銃を回転させ、常に視点内に銃を表示する
 	VECTOR playerRot = player->GetRotation();
 	VECTOR playerPos = player->GetPosition();
 	position = VGet(0, -25, 50) * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(playerPos + VGet(0, 75, 0));
 	//もとの座標 * x軸回転行列 * y軸回転行列 * 移動座標(回転の中心座標を入れる)
-
+	
+	//同じ部分だけ見えるようにカメラの角度に応じて回転する
 	rotation = VGet(0, playerRot.y + 0.5f * DX_PI, 0);
+	VECTOR right = VGet(1, 0, 0) * MGetRotY(playerRot.y);
+	mat = MGetRotY(rotation.y) * MGetRotAxis(right, playerRot.x);
 
-	//発砲
+	//左クリックで発砲
 	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)
 	{
+		//押した瞬間なら
 		if (!lastHitKey)
 		{
 			lastHitKey = true;
@@ -46,10 +55,16 @@ void Gun::Update()
 
 void Gun::Draw()
 {
-	MV1SetPosition(hModel, position);
-	MV1SetRotationXYZ(hModel, rotation);
-	MV1DrawModel(hModel);
+	if (hModel != -1)
+	{
+		MV1SetPosition(hModel, position);
 
+		//同じ部分だけ見えるようにカメラの角度に応じて回転する
+		MV1SetRotationMatrix(hModel, mat);
+
+		MV1DrawModel(hModel);
+	}
+	
 	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "GunPositionX=%2f", position.x);
 	DrawFormatString(Screen::WIDTH - 200, 25, GetColor(255, 0, 0), "GunPositionY=%2f", position.y);
 	DrawFormatString(Screen::WIDTH - 200, 50, GetColor(255, 0, 0), "GunPositionZ=%2f", position.z);

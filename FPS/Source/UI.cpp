@@ -1,10 +1,18 @@
 #include "UI.h"
 #include "Screen.h"
+#include <assert.h>
 
+/// <summary>
+/// UI
+/// </summary>
 UI::UI()
 {
 	player = ObjectManager::FindGameObject<Player>();
+	assert(player != nullptr);
+
 	gun = ObjectManager::FindGameObject<Gun>();
+	assert(player != nullptr);
+
 	hp = player->GetHp();
 	fullBullets = gun->GetFullBullets();
 	restBullets = gun->GetRestBullets();

@@ -1,14 +1,15 @@
 #include "Bullet.h"
 #include "Screen.h"
+#include <assert.h>
 
 Bullet::Bullet()
 {
 	gun = ObjectManager::FindGameObject<Gun>();
+	assert(gun != nullptr);
 
 	hModel = MV1LoadModel("data/Gun/Bullet.mv1");
 
 	speed = 100.0f / 60;
-	isFire = false;
 }
 
 Bullet::~Bullet()
@@ -24,9 +25,12 @@ void Bullet::Update()
 
 void Bullet::Draw()
 {
-	MV1SetPosition(hModel, position);
-	MV1SetRotationXYZ(hModel, rotation);
-	MV1DrawModel(hModel);
+	if (hModel != -1)
+	{
+		MV1SetPosition(hModel, position);
+		MV1SetRotationXYZ(hModel, rotation);
+		MV1DrawModel(hModel);
+	}
 }
 
 void Bullet::SetPosition(VECTOR pos)

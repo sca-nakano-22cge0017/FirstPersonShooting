@@ -1,10 +1,6 @@
 #include "Player.h"
 #include "Stage.h"
-#include "Gun.h"
-#include "Bullet.h"
 #include "../ImGui/imgui.h"
-#include <cstdlib>
-#include <cmath>
 #include "Screen.h"
 
 Player::Player()
@@ -33,17 +29,20 @@ void Player::Start()
 {
 }
 
-float hitPos = 0;
 void Player::Update()
 {
 	MATRIX rotY = MGetRotY(rotation.y);
 	VECTOR move;
-	if (CheckHitKey(KEY_INPUT_F)) move = VGet(0, 0, 2) * runSpeed; //走り
+
+	//Fキー同時押しで移動速度上昇
+	if (CheckHitKey(KEY_INPUT_F)) move = VGet(0, 0, 2) * runSpeed;
 	else move = VGet(0, 0, 2);
+
 	VECTOR forward = move * rotY;
 	VECTOR right = forward * MGetRotY(-0.5 * DX_PI);
 	VECTOR left = forward * MGetRotY(0.5 * DX_PI);
 
+	//WASD移動
 	if (CheckHitKey(KEY_INPUT_W))
 	{		
 		position += forward;
@@ -77,9 +76,9 @@ void Player::CollCheck()
 	Stage* pStage = ObjectManager::FindGameObject<Stage>();
 	if (pStage != nullptr) {
 		VECTOR groundHit;
+		//地面との当たり判定　当たったら接地してるかどうかのフラグをtrueにする
 		if (pStage->CollLine(position + VGet(0, 100, 0), position + VGet(0, -500, 0), &groundHit))
 		{
-			hitPos = groundHit.y;
 			if (position.y <= groundHit.y)
 			{
 				isGround = true;
@@ -92,12 +91,16 @@ void Player::CollCheck()
 const float g = 9.8f; //重力加速度
 void Player::Jump()
 {
+	//接地していたら
 	if (isGround)
 	{
+		//スペースキーを押したら
 		if (CheckHitKey(KEY_INPUT_SPACE))
 		{
+			//前フレームで押されている状態じゃなかったら = 押した瞬間だったら
 			if (!lastJumpKey)
 			{
+				//上昇
 				vy = firstJumpVelocity;
 				position.y += vy;
 			}
@@ -105,9 +108,11 @@ void Player::Jump()
 		}
 		else lastJumpKey = false;
 	}
-	
-	if (!isGround)
+
+	//接地していなかったら
+	else
 	{
+		//自由落下
 		vy -= g / 60;
 		position.y += vy;
 	}
@@ -115,8 +120,10 @@ void Player::Jump()
 
 void Player::ViewPoint() //視点移動
 {
+	//マウスの座標を取得
 	GetMousePoint(&mouseX, &mouseY);
 
+	//マウスの移動量からカメラの回転角度を算出・設定する
 	int moveX = mouseX - lastMouseX;
 	int moveY = mouseY - lastMouseY;
 
@@ -124,7 +131,14 @@ void Player::ViewPoint() //視点移動
 	lastMouseY = mouseY;
 
 	rotation.y += moveX * moveSpeed;
-	rotation.x += moveY * moveSpeed;
+
+	//上下方向への視点移動に制限を掛ける
+	if (rotXMin <= rotation.x && rotXMax >= rotation.x)
+	{
+		rotation.x += moveY * moveSpeed;
+	}
+	else if (rotXMin > rotation.x) rotation.x = rotXMin;
+	else if (rotXMax < rotation.x) rotation.x = rotXMax;
 
 	SetCameraPositionAndAngle(position + VGet(0, 75, 0), rotation.x, rotation.y, 0);
 }
@@ -135,6 +149,7 @@ void Player::Damage()
 
 void Player::Debug()
 {
+	//プレイヤーの座標・角度などを表示
 	ImGui::Begin("Player");
 	ImGui::InputFloat("X", &position.x);
 	ImGui::InputFloat("Y", &position.y);

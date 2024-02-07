@@ -1,9 +1,9 @@
 #include "PlayScene.h"
 #include "../Library/SceneManager.h"
 #include "DebugScreen.h"
+#include "../Library/Time.h"
 #include <DxLib.h>
 #include "Screen.h"
-#include "../Library/Time.h"
 #include "Player.h"
 #include "Stage.h"
 #include "UI.h"

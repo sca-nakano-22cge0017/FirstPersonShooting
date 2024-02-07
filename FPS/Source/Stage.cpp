@@ -1,5 +1,8 @@
 #include "Stage.h"
 
+/// <summary>
+/// ステージ
+/// </summary>
 Stage::Stage()
 {
 	hModel = MV1LoadModel("data/Stage/Stage.mv1");
@@ -17,9 +20,12 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-	MV1SetPosition(hModel, position);
-	MV1SetRotationXYZ(hModel, rotation);
-	MV1DrawModel(hModel);
+	if (hModel != -1)
+	{
+		MV1SetPosition(hModel, position);
+		MV1SetRotationXYZ(hModel, rotation);
+		MV1DrawModel(hModel);
+	}
 }
 
 bool Stage::CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos)

@@ -1,6 +1,9 @@
 #pragma once
 #include "../Library/GameObject.h"
 
+/// <summary>
+/// プレイヤー
+/// </summary>
 class Player : public GameObject
 {
 public:
@@ -10,7 +13,14 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	/// <summary>
+	/// プレイヤーの座標を取得する
+	/// </summary>
 	VECTOR GetPosition() { return position; }
+
+	/// <summary>
+	/// プレイヤーの回転角度を取得する
+	/// </summary>
 	VECTOR GetRotation() { return rotation; }
 
 	int GetHp() { return hp; }
@@ -30,16 +40,20 @@ private:
 	float vy; //Y軸方向の速度
 	bool isGround;
 	bool lastJumpKey;
+	// ジャンプの処理
 	void Jump();
 
 	//視点移動
+	const float rotXMin = -0.8f, rotXMax = 0.8f;
 	int lastMouseX, lastMouseY;
 	const float moveSpeed = 0.005f; //感度
 	int mouseX, mouseY;
+	// 視点移動の処理
 	void ViewPoint();
 
 	//HP
 	int hp;
+	// ダメージ処理
 	void Damage();
 
 	//デバッグ用　座標表示

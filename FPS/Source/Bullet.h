@@ -2,6 +2,9 @@
 #include "../Library/GameObject.h"
 #include "Gun.h"
 
+/// <summary>
+/// e’e
+/// </summary>
 class Bullet : public GameObject
 {
 public:
@@ -9,9 +12,17 @@ public:
 	~Bullet();
 	void Update() override;
 	void Draw() override;
-	void Fire() { isFire = true; }
 
+	/// <summary>
+	/// e’e‚Ì¶¬ˆÊ’u‚ğ‘ã“ü‚·‚é
+	/// </summary>
+	/// <param name="pos">¶¬ˆÊ’u</param>
 	void SetPosition(VECTOR pos);
+
+	/// <summary>
+	/// e’e‚Ì¶¬Šp“x‚ğ‘ã“ü‚·‚é
+	/// </summary>
+	/// <param name="rot">¶¬Šp“x</param>
 	void SetRotation(VECTOR rot);
 
 private:
@@ -19,7 +30,6 @@ private:
 	VECTOR position;
 	VECTOR rotation;
 	float speed;
-	bool isFire;
 
 	Gun* gun;
 };
