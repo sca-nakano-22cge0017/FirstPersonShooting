@@ -36,6 +36,8 @@ private:
 	VECTOR rotation;
 	MATRIX mat;
 
+	VECTOR basePos = VGet(0, -25, 50); //基本の座標　プレイヤーが初期位置から移動・回転していない場合の座標
+
 	int fullBullets; //最大弾数
 	int restBullets; //残弾数
 	bool lastHitKey;
@@ -43,6 +45,8 @@ private:
 	float elapsedTime;
 
 	void Fire();
+
+	VECTOR bulletsPos = VGet(23, -2.5f, -11.75f); //Gunから見て銃弾を生成する座標
 
 	Player* player;
 };

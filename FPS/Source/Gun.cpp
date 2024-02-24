@@ -31,14 +31,14 @@ void Gun::Update()
 {
 	//カメラを中心にして銃を回転させ、常に視点内に銃を表示する
 	VECTOR playerRot = player->GetRotation();
-	VECTOR playerPos = player->GetPosition();
-	position = VGet(0, -25, 50) * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(playerPos + VGet(0, 75, 0));
+	VECTOR cameraPos = player->GetCameraPos();
+	position = basePos * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(cameraPos);
 	//もとの座標 * x軸回転行列 * y軸回転行列 * 移動座標(回転の中心座標を入れる)
 	
 	//同じ部分だけ見えるようにカメラの角度に応じて回転する
-	rotation = VGet(0, playerRot.y + 0.5f * DX_PI, 0);
+	rotation = VGet(0, playerRot.y + 0.5f * DX_PI, 0); //プレイヤーの向きに対してデフォルトで90度回転してるので調整
 	VECTOR right = VGet(1, 0, 0) * MGetRotY(playerRot.y);
-	mat = MGetRotY(rotation.y) * MGetRotAxis(right, playerRot.x);
+	mat = MGetRotY(rotation.y) * MGetRotAxis(right, playerRot.x); //プレイヤーから見て右方向へのベクトルを回転軸にして回転させる
 
 	//左クリックで発砲
 	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)
@@ -76,7 +76,7 @@ void Gun::Fire()
 	Bullet* bullet = Instantiate<Bullet>();
 
 	//生成位置の代入
-	VECTOR bulletPos = VGet(23, -2.5f, -11.75f) * MGetRotX(rotation.x) * MGetRotY(rotation.y) * MGetTranslate(position);
+	VECTOR bulletPos = bulletsPos * MGetRotX(rotation.x) * MGetRotY(rotation.y) * MGetTranslate(position);
 	VECTOR bulletRot = VGet(0, rotation.y + DX_PI / 2, 0);
 
 	bullet->SetPosition(bulletPos);

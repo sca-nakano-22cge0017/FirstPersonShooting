@@ -27,8 +27,8 @@ public:
 
 private:
 	int hModel;
-	VECTOR position;
-	VECTOR rotation;
+	VECTOR position = VGet(0, 0, 0);
+	VECTOR rotation = VGet(0, 0, 0);
 	float speed;
 
 	Gun* gun;

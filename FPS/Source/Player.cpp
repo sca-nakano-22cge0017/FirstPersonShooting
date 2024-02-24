@@ -69,6 +69,7 @@ void Player::Update()
 
 void Player::Draw()
 {
+	DrawLine3D(cameraPos + position, VGet(0, 0, 0), GetColor(255, 0, 0));
 }
 
 void Player::CollCheck()
@@ -140,7 +141,7 @@ void Player::ViewPoint() //Ž‹“_ˆÚ“®
 	else if (rotXMin > rotation.x) rotation.x = rotXMin;
 	else if (rotXMax < rotation.x) rotation.x = rotXMax;
 
-	SetCameraPositionAndAngle(position + VGet(0, 75, 0), rotation.x, rotation.y, 0);
+	SetCameraPositionAndAngle(position + cameraPos, rotation.x, rotation.y, 0);
 }
 
 void Player::Damage()

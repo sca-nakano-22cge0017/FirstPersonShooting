@@ -23,6 +23,11 @@ public:
 	/// </summary>
 	VECTOR GetRotation() { return rotation; }
 
+	/// <summary>
+	/// カメラの座標を取得する
+	/// </summary>
+	VECTOR GetCameraPos() { return position + cameraPos; }
+
 	int GetHp() { return hp; }
 
 private:
@@ -42,6 +47,9 @@ private:
 	bool lastJumpKey;
 	// ジャンプの処理
 	void Jump();
+
+	//カメラのプレイヤー基準の座標
+	VECTOR cameraPos = VGet(0, 75, 0);
 
 	//視点移動
 	const float rotXMin = -0.8f, rotXMax = 0.8f;
