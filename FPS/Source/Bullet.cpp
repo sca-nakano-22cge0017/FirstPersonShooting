@@ -18,7 +18,8 @@ Bullet::~Bullet()
 
 void Bullet::Update()
 {
-	position += VGet(-1, 0, 0) * speed;
+	dir = targetPos - position;
+	position += VNorm(dir) * speed;
 
 	//DestroyMe(); //çÌèú
 }
@@ -41,4 +42,9 @@ void Bullet::SetPosition(VECTOR pos)
 void Bullet::SetRotation(VECTOR rot)
 {
 	rotation = rot;
+}
+
+void Bullet::SetTarget(VECTOR target)
+{
+	targetPos = target;
 }

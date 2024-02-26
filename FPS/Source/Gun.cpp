@@ -3,6 +3,7 @@
 #include <math.h>
 #include "Bullet.h"
 #include <assert.h>
+#include "Stage.h"
 
 /// <summary>
 /// 銃
@@ -38,7 +39,7 @@ void Gun::Update()
 	//同じ部分だけ見えるようにカメラの角度に応じて回転する
 	rotation = VGet(0, playerRot.y + 0.5f * DX_PI, 0); //プレイヤーの向きに対してデフォルトで90度回転してるので調整
 	VECTOR right = VGet(1, 0, 0) * MGetRotY(playerRot.y);
-	mat = MGetRotY(rotation.y) * MGetRotAxis(right, playerRot.x); //プレイヤーから見て右方向へのベクトルを回転軸にして回転させる
+	matrix = MGetRotY(rotation.y) * MGetRotAxis(right, playerRot.x); //プレイヤーから見て右方向へのベクトルを回転軸にして回転させる
 
 	//左クリックで発砲
 	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)
@@ -51,6 +52,8 @@ void Gun::Update()
 		}
 	}
 	else lastHitKey = false;
+
+	hitPos = TargetAcquisition();
 }
 
 void Gun::Draw()
@@ -60,14 +63,16 @@ void Gun::Draw()
 		MV1SetPosition(hModel, position);
 
 		//同じ部分だけ見えるようにカメラの角度に応じて回転する
-		MV1SetRotationMatrix(hModel, mat);
+		MV1SetRotationMatrix(hModel, matrix);
 
 		MV1DrawModel(hModel);
 	}
 	
-	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "GunPositionX=%2f", position.x);
-	DrawFormatString(Screen::WIDTH - 200, 25, GetColor(255, 0, 0), "GunPositionY=%2f", position.y);
-	DrawFormatString(Screen::WIDTH - 200, 50, GetColor(255, 0, 0), "GunPositionZ=%2f", position.z);
+	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "HIT.X=%2f", hitPos.x);
+	DrawFormatString(Screen::WIDTH - 200, 25, GetColor(255, 0, 0), "HIT.Y=%2f", hitPos.y);
+	DrawFormatString(Screen::WIDTH - 200, 50, GetColor(255, 0, 0), "HIT.Z=%2f", hitPos.z);
+
+	DrawSphere3D(hitPos, 1.0f, 32, GetColor(255, 0, 0), GetColor(255, 255, 255), TRUE);
 }
 
 void Gun::Fire()
@@ -81,4 +86,25 @@ void Gun::Fire()
 
 	bullet->SetPosition(bulletPos);
 	bullet->SetRotation(bulletRot);
+
+	bullet->SetTarget(hitPos);
+}
+
+VECTOR Gun::TargetAcquisition()
+{
+	VECTOR cameraPos = player->GetCameraPos();
+	VECTOR playerRot = player->GetRotation();
+
+	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f));
+	VECTOR targetVec = VGet(0, 0, 1000) * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(reticulePos);
+
+	Stage* pStage = ObjectManager::FindGameObject<Stage>();
+	if (pStage != nullptr) {
+		VECTOR hit;
+		if (pStage->CollLine(reticulePos, targetVec, &hit))
+		{
+			return hit;
+		}
+		else return targetVec;
+	}
 }

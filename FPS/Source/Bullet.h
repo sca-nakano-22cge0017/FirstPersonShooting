@@ -25,11 +25,20 @@ public:
 	/// <param name="rot">生成角度</param>
 	void SetRotation(VECTOR rot);
 
+	/// <summary>
+	/// 目標物の座標を代入する
+	/// </summary>
+	/// <param name="target">目標座標</param>
+	void SetTarget(VECTOR target);
+
 private:
 	int hModel;
 	VECTOR position = VGet(0, 0, 0);
 	VECTOR rotation = VGet(0, 0, 0);
 	float speed;
+
+	VECTOR dir; //移動方向
+	VECTOR targetPos = VGet(0, 0, 0);
 
 	Gun* gun;
 };

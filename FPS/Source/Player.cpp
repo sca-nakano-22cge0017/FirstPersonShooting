@@ -69,7 +69,6 @@ void Player::Update()
 
 void Player::Draw()
 {
-	DrawLine3D(cameraPos + position, VGet(0, 0, 0), GetColor(255, 0, 0));
 }
 
 void Player::CollCheck()

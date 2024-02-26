@@ -12,8 +12,8 @@
 
 PlayScene::PlayScene()
 {
-	Instantiate<Player>();
 	Instantiate<Stage>();
+	Instantiate<Player>();
 	Instantiate<Gun>();
 	Instantiate<Bullet>();
 	Instantiate<UI>();

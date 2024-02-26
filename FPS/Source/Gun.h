@@ -34,7 +34,7 @@ private:
 	int hModel;
 	VECTOR position;
 	VECTOR rotation;
-	MATRIX mat;
+	MATRIX matrix;
 
 	VECTOR basePos = VGet(0, -25, 50); //基本の座標　プレイヤーが初期位置から移動・回転していない場合の座標
 
@@ -44,7 +44,9 @@ private:
 	const float coolTime = 1.0f;
 	float elapsedTime;
 
-	void Fire();
+	void Fire(); //発砲処理
+	VECTOR TargetAcquisition(); //標的捕捉
+	VECTOR hitPos = VGet(0, 0, 0); //標的の位置
 
 	VECTOR bulletsPos = VGet(23, -2.5f, -11.75f); //Gunから見て銃弾を生成する座標
 
