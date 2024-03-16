@@ -5,7 +5,7 @@
 /// </summary>
 Stage::Stage()
 {
-	hModel = MV1LoadModel("data/Stage/Stage.mv1");
+	hModel = MV1LoadModel("data/Stage/Stage00.mv1");
 	position = VGet(-600, 0, 0);
 	rotation = VGet(0, 1 * DX_PI, 0);
 }

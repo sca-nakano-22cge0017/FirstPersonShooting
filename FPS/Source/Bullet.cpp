@@ -8,8 +8,6 @@ Bullet::Bullet()
 	assert(gun != nullptr);
 
 	hModel = MV1LoadModel("data/Gun/Bullet.mv1");
-
-	speed = 100.0f / 60;
 }
 
 Bullet::~Bullet()
@@ -18,7 +16,6 @@ Bullet::~Bullet()
 
 void Bullet::Update()
 {
-	dir = targetPos - position;
 	position += VNorm(dir) * speed;
 
 	//DestroyMe(); //çÌèú
@@ -47,4 +44,5 @@ void Bullet::SetRotation(VECTOR rot)
 void Bullet::SetTarget(VECTOR target)
 {
 	targetPos = target;
+	dir = targetPos - position;
 }

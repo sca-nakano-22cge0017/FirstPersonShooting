@@ -33,8 +33,8 @@ void Gun::Update()
 	//カメラを中心にして銃を回転させ、常に視点内に銃を表示する
 	VECTOR playerRot = player->GetRotation();
 	VECTOR cameraPos = player->GetCameraPos();
-	position = basePos * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(cameraPos);
 	//もとの座標 * x軸回転行列 * y軸回転行列 * 移動座標(回転の中心座標を入れる)
+	position = basePos * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(cameraPos);
 	
 	//同じ部分だけ見えるようにカメラの角度に応じて回転する
 	rotation = VGet(0, playerRot.y + 0.5f * DX_PI, 0); //プレイヤーの向きに対してデフォルトで90度回転してるので調整
@@ -72,7 +72,9 @@ void Gun::Draw()
 	DrawFormatString(Screen::WIDTH - 200, 25, GetColor(255, 0, 0), "HIT.Y=%2f", hitPos.y);
 	DrawFormatString(Screen::WIDTH - 200, 50, GetColor(255, 0, 0), "HIT.Z=%2f", hitPos.z);
 
-	DrawSphere3D(hitPos, 1.0f, 32, GetColor(255, 0, 0), GetColor(255, 255, 255), TRUE);
+	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f));
+	VECTOR bulletPos = bulletsPos * MGetRotX(rotation.x) * MGetRotY(rotation.y) * MGetTranslate(position);
+	DrawLine3D(bulletPos, reticulePos, GetColor(255, 0, 0));
 }
 
 void Gun::Fire()
@@ -86,16 +88,17 @@ void Gun::Fire()
 
 	bullet->SetPosition(bulletPos);
 	bullet->SetRotation(bulletRot);
-
 	bullet->SetTarget(hitPos);
 }
 
 VECTOR Gun::TargetAcquisition()
 {
-	VECTOR cameraPos = player->GetCameraPos();
-	VECTOR playerRot = player->GetRotation();
+	VECTOR cameraPos = player->GetCameraPos(); //カメラ座標
+	VECTOR playerRot = player->GetRotation(); //プレイヤー回転角度
 
-	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f));
+	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f)); //レティクルのワールド座標
+
+	//レティクルの位置から前方方向へのベクトル
 	VECTOR targetVec = VGet(0, 0, 1000) * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(reticulePos);
 
 	Stage* pStage = ObjectManager::FindGameObject<Stage>();
@@ -103,8 +106,9 @@ VECTOR Gun::TargetAcquisition()
 		VECTOR hit;
 		if (pStage->CollLine(reticulePos, targetVec, &hit))
 		{
+			//レティクルの位置から前方へ向けてのベクトルに何かぶつかったら、衝突位置を返す -> 標的の座標として使う
 			return hit;
 		}
-		else return targetVec;
+		else return targetVec; //何にもぶつからなかったら、前方方向へのベクトルを返す
 	}
 }
