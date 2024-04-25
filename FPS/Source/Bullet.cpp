@@ -16,9 +16,12 @@ Bullet::~Bullet()
 
 void Bullet::Update()
 {
-	position += VNorm(dir) * speed;
+	//position += VNorm(dir) * speed;
 
-	//DestroyMe(); //çÌèú
+	if (abs(VSize(targetPos - position)) < 5)
+	{
+		DestroyMe(); //çÌèú
+	}
 }
 
 void Bullet::Draw()
@@ -29,6 +32,8 @@ void Bullet::Draw()
 		MV1SetRotationXYZ(hModel, rotation);
 		MV1DrawModel(hModel);
 	}
+
+	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "x= %f, \ny= %f, \nz= %f", position.x, position.y, position.z);
 }
 
 void Bullet::SetPosition(VECTOR pos)

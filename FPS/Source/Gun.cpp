@@ -4,6 +4,7 @@
 #include "Bullet.h"
 #include <assert.h>
 #include "Stage.h"
+#include <vector>
 
 /// <summary>
 /// 銃
@@ -67,14 +68,6 @@ void Gun::Draw()
 
 		MV1DrawModel(hModel);
 	}
-	
-	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "HIT.X=%2f", hitPos.x);
-	DrawFormatString(Screen::WIDTH - 200, 25, GetColor(255, 0, 0), "HIT.Y=%2f", hitPos.y);
-	DrawFormatString(Screen::WIDTH - 200, 50, GetColor(255, 0, 0), "HIT.Z=%2f", hitPos.z);
-
-	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f));
-	VECTOR bulletPos = bulletsPos * MGetRotX(rotation.x) * MGetRotY(rotation.y) * MGetTranslate(position);
-	DrawLine3D(bulletPos, reticulePos, GetColor(255, 0, 0));
 }
 
 void Gun::Fire()
@@ -82,8 +75,10 @@ void Gun::Fire()
 	//弾の生成
 	Bullet* bullet = Instantiate<Bullet>();
 
+	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH/2, Screen::HEIGHT/2, 0.0f)); //レティクルのワールド座標
+
 	//生成位置の代入
-	VECTOR bulletPos = bulletsPos * MGetRotX(rotation.x) * MGetRotY(rotation.y) * MGetTranslate(position);
+	VECTOR bulletPos = reticulePos;
 	VECTOR bulletRot = VGet(0, rotation.y + DX_PI / 2, 0);
 
 	bullet->SetPosition(bulletPos);
@@ -99,7 +94,8 @@ VECTOR Gun::TargetAcquisition()
 	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f)); //レティクルのワールド座標
 
 	//レティクルの位置から前方方向へのベクトル
-	VECTOR targetVec = VGet(0, 0, 1000) * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(reticulePos);
+	//VECTOR targetVec = VGet(0, 0, 1000) * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(reticulePos);
+	VECTOR targetVec = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 1.0f));
 
 	Stage* pStage = ObjectManager::FindGameObject<Stage>();
 	if (pStage != nullptr) {
