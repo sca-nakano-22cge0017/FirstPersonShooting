@@ -35,8 +35,7 @@ private:
 	int hModel;
 	VECTOR position;
 	VECTOR rotation;
-	//float speed = 200.0f / 60;
-	float speed = 1;
+	float speed = 200.0f / 60;
 
 	VECTOR dir; //ˆÚ“®•ûŒü
 	VECTOR targetPos = VGet(0, 0, 0);

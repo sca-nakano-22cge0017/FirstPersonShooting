@@ -7,7 +7,7 @@ Bullet::Bullet()
 	gun = ObjectManager::FindGameObject<Gun>();
 	assert(gun != nullptr);
 
-	hModel = MV1LoadModel("data/Gun/Bullet.mv1");
+	hModel = MV1LoadModel("data/Gun/Bullet1.mv1");
 }
 
 Bullet::~Bullet()
@@ -16,7 +16,7 @@ Bullet::~Bullet()
 
 void Bullet::Update()
 {
-	//position += VNorm(dir) * speed;
+	position += VNorm(dir) * speed;
 
 	if (abs(VSize(targetPos - position)) < 5)
 	{

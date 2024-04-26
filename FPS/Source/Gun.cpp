@@ -70,12 +70,15 @@ void Gun::Draw()
 	}
 }
 
+//VECTOR bulletPosAjust = VGet(12.0f, -13.6f, 32.0f);
+VECTOR bulletPosAjust = VGet(0, 0, 0);
+
 void Gun::Fire()
 {
 	//弾の生成
 	Bullet* bullet = Instantiate<Bullet>();
 
-	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH/2, Screen::HEIGHT/2, 0.0f)); //レティクルのワールド座標
+	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH/2, Screen::HEIGHT/2, 0.998f)); //レティクルのワールド座標
 
 	//生成位置の代入
 	VECTOR bulletPos = reticulePos;
@@ -94,7 +97,6 @@ VECTOR Gun::TargetAcquisition()
 	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f)); //レティクルのワールド座標
 
 	//レティクルの位置から前方方向へのベクトル
-	//VECTOR targetVec = VGet(0, 0, 1000) * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(reticulePos);
 	VECTOR targetVec = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 1.0f));
 
 	Stage* pStage = ObjectManager::FindGameObject<Stage>();
