@@ -31,14 +31,39 @@ public:
 	/// <param name="target">目標座標</param>
 	void SetTarget(VECTOR target);
 
+	/// <summary>
+	/// 銃弾モデルの生成位置を代入する
+	/// </summary>
+	/// <param name="pos">生成位置</param>
+	void SetModelPosition(VECTOR pos);
+
+	/// <summary>
+	/// 銃弾モデルの生成角度を代入する
+	/// </summary>
+	/// <param name="pos">生成角度</param>
+	void SetModelRotation(VECTOR rot);
+
+	/// <summary>
+	/// 銃弾モデルの生成角度を代入する
+	/// </summary>
+	/// <param name="rot">生成角度</param>
+	void SetModelMatrix(MATRIX mat);
+
 private:
 	int hModel;
 	VECTOR position;
 	VECTOR rotation;
-	float speed = 200.0f / 60;
+
+	float speed = 500.0f / 60;
 
 	VECTOR dir; //移動方向
 	VECTOR targetPos = VGet(0, 0, 0);
+
+	VECTOR diff; // 判定とモデルの差
+	VECTOR modelPosition;
+	VECTOR modelRotation;
+	MATRIX matrix;
+	VECTOR modelDir;
 
 	Gun* gun;
 };

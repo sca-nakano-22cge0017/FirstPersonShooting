@@ -18,7 +18,7 @@ Player::Player()
 	mouseX = mouseY = 0;
 
 	//カメラの表示範囲設定
-	SetCameraNearFar(0.1f, 2000.0f);
+	SetCameraNearFar(0.1f, 4000.0f);
 }
 
 Player::~Player()
@@ -61,7 +61,7 @@ void Player::Update()
 	}
 
 	CollCheck();
-	Jump();
+	//Jump();
 	ViewPoint();
 
 	Debug();
@@ -76,10 +76,11 @@ void Player::CollCheck()
 	Stage* pStage = ObjectManager::FindGameObject<Stage>();
 	if (pStage != nullptr) {
 		VECTOR groundHit;
-		//地面との当たり判定　当たったら接地してるかどうかのフラグをtrueにする
-		if (pStage->CollLine(position + VGet(0, 100, 0), position + VGet(0, -500, 0), &groundHit))
+		if (pStage->CollLine(position, position + VGet(0, -110, 0), &groundHit))
 		{
-			if (position.y <= groundHit.y)
+			position = groundHit + playerHeight; // positionを地面に合わせる
+
+			if (position.y <= groundHit.y + playerHeight.y)
 			{
 				isGround = true;
 			}

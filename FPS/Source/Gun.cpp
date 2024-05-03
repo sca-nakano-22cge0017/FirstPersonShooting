@@ -70,9 +70,6 @@ void Gun::Draw()
 	}
 }
 
-//VECTOR bulletPosAjust = VGet(12.0f, -13.6f, 32.0f);
-VECTOR bulletPosAjust = VGet(0, 0, 0);
-
 void Gun::Fire()
 {
 	//弾の生成
@@ -80,13 +77,25 @@ void Gun::Fire()
 
 	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH/2, Screen::HEIGHT/2, 0.998f)); //レティクルのワールド座標
 
-	//生成位置の代入
+	//判定生成位置の代入
 	VECTOR bulletPos = reticulePos;
-	VECTOR bulletRot = VGet(0, rotation.y + DX_PI / 2, 0);
+	VECTOR bulletRot = VGet(0, rotation.y - DX_PI / 2, 0);
 
 	bullet->SetPosition(bulletPos);
 	bullet->SetRotation(bulletRot);
 	bullet->SetTarget(hitPos);
+
+	// 銃弾モデルの生成位置設定
+	VECTOR modelPosition = position + bulletsCreatePos;
+	VECTOR modelRotation = VGet(0, rotation.y - DX_PI / 2, 0);
+
+	bullet->SetModelPosition(modelPosition);
+
+	// 銃弾モデルの向き調整
+	VECTOR playerRot = player->GetRotation();
+	VECTOR right = VGet(1, 0, 0) * MGetRotY(playerRot.y);
+	MATRIX bulletMatrix = MGetRotY(modelRotation.y) * MGetRotAxis(right, playerRot.x);
+	bullet->SetModelMatrix(bulletMatrix);
 }
 
 VECTOR Gun::TargetAcquisition()

@@ -48,7 +48,7 @@ private:
 	VECTOR TargetAcquisition(); //標的捕捉
 	VECTOR hitPos = VGet(0, 0, 0); //標的の位置
 
-	VECTOR bulletsPos = VGet(23, -2.5f, -11.75f); //Gunから見て銃弾を生成する座標
+	VECTOR bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f); //Gunから見て銃弾を生成する座標
 
 	Player* player;
 };

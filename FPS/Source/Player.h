@@ -34,6 +34,8 @@ private:
 	VECTOR position;
 	VECTOR rotation;
 
+	const VECTOR playerHeight = VGet(0, 100, 0);
+
 	//‘–‚è
 	const float runSpeed = 2;
 
