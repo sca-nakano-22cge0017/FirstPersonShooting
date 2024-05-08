@@ -49,6 +49,7 @@ private:
 	bool lastJumpKey;
 	// ジャンプの処理
 	void Jump();
+	bool isJumping;
 
 	//カメラのプレイヤー基準の座標
 	VECTOR cameraPos = VGet(0, 75, 0);

@@ -79,10 +79,8 @@ void Gun::Fire()
 
 	//”»’è¶¬ˆÊ’u‚Ì‘ã“ü
 	VECTOR bulletPos = reticulePos;
-	VECTOR bulletRot = VGet(0, rotation.y - DX_PI / 2, 0);
 
 	bullet->SetPosition(bulletPos);
-	bullet->SetRotation(bulletRot);
 	bullet->SetTarget(hitPos);
 
 	// e’eƒ‚ƒfƒ‹‚Ì¶¬ˆÊ’uİ’è

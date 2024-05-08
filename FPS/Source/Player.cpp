@@ -10,6 +10,7 @@ Player::Player()
 	hp = 100;
 
 	isGround = true;
+	isJumping = false;
 	lastJumpKey = false;
 	vy = 0;
 
@@ -61,7 +62,7 @@ void Player::Update()
 	}
 
 	CollCheck();
-	//Jump();
+	Jump();
 	ViewPoint();
 
 	Debug();
@@ -78,14 +79,17 @@ void Player::CollCheck()
 		VECTOR groundHit;
 		if (pStage->CollLine(position, position + VGet(0, -110, 0), &groundHit))
 		{
-			position = groundHit + playerHeight; // positionを地面に合わせる
+			if(!isJumping) // ジャンプ中でなければ
+				position = groundHit + playerHeight; // positionを地面に合わせる
 
 			if (position.y <= groundHit.y + playerHeight.y)
 			{
 				isGround = true;
+				isJumping = false;
 			}
 			else isGround = false;
 		}
+		else isGround = false;
 	}
 }
 
@@ -98,6 +102,8 @@ void Player::Jump()
 		//スペースキーを押したら
 		if (CheckHitKey(KEY_INPUT_SPACE))
 		{
+			isJumping = true;
+
 			//前フレームで押されている状態じゃなかったら = 押した瞬間だったら
 			if (!lastJumpKey)
 			{

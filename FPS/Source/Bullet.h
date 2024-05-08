@@ -54,7 +54,7 @@ private:
 	VECTOR position;
 	VECTOR rotation;
 
-	float speed = 500.0f / 60;
+	float speed = 600.0f / 60;
 
 	VECTOR dir; //ˆÚ“®•ûŒü
 	VECTOR targetPos = VGet(0, 0, 0);
