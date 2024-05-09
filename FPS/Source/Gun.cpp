@@ -1,10 +1,12 @@
+#include <math.h>
+#include <assert.h>
+#include <vector>
 #include "Gun.h"
 #include "Screen.h"
-#include <math.h>
 #include "Bullet.h"
-#include <assert.h>
 #include "Stage.h"
-#include <vector>
+#include "Enemy.h"
+#include "Collider.h"
 
 /// <summary>
 /// 銃
@@ -23,6 +25,8 @@ Gun::Gun()
 	elapsedTime = 0;
 	fullBullets = 10;
 	restBullets = 10;
+
+	enemies = ObjectManager::FindGameObjects<Enemy>();
 }
 
 Gun::~Gun()
@@ -53,8 +57,6 @@ void Gun::Update()
 		}
 	}
 	else lastHitKey = false;
-
-	hitPos = TargetAcquisition();
 }
 
 void Gun::Draw()
@@ -72,15 +74,15 @@ void Gun::Draw()
 
 void Gun::Fire()
 {
+	targetPos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 1.0f));
+	reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f));
+
 	//弾の生成
 	Bullet* bullet = Instantiate<Bullet>();
 
-	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH/2, Screen::HEIGHT/2, 0.998f)); //レティクルのワールド座標
+	VECTOR hitPos = TargetAcquisition();
 
-	//判定生成位置の代入
-	VECTOR bulletPos = reticulePos;
-
-	bullet->SetPosition(bulletPos);
+	bullet->SetPosition(reticulePos);
 	bullet->SetTarget(hitPos);
 
 	// 銃弾モデルの生成位置設定
@@ -96,24 +98,52 @@ void Gun::Fire()
 	bullet->SetModelMatrix(bulletMatrix);
 }
 
+// 着弾位置の計算
 VECTOR Gun::TargetAcquisition()
 {
 	VECTOR cameraPos = player->GetCameraPos(); //カメラ座標
 	VECTOR playerRot = player->GetRotation(); //プレイヤー回転角度
-
-	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f)); //レティクルのワールド座標
-
-	//レティクルの位置から前方方向へのベクトル
-	VECTOR targetVec = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 1.0f));
+	
+	// レティクルから飛ばされた線分が衝突したものの座標のうち、もっともプレイヤーに近い座標を保存
+	VECTOR nearHitPos = targetPos;
 
 	Stage* pStage = ObjectManager::FindGameObject<Stage>();
 	if (pStage != nullptr) {
 		VECTOR hit;
-		if (pStage->CollLine(reticulePos, targetVec, &hit))
+		if (pStage->CollLine(reticulePos, targetPos, &hit))
 		{
-			//レティクルの位置から前方へ向けてのベクトルに何かぶつかったら、衝突位置を返す -> 標的の座標として使う
-			return hit;
+			if (VSize(position - hit) < VSize(position - nearHitPos))
+			{
+				nearHitPos = hit;
+			}
 		}
-		else return targetVec; //何にもぶつからなかったら、前方方向へのベクトルを返す
 	}
+
+	// 最も近い敵を保存
+	Enemy* nearEnemy = nullptr;
+
+	// もっとも近い位置の敵を取得する
+	for (Enemy* e : enemies)
+	{
+		VECTOR hit;
+		if (e != nullptr) {
+			if (e->CollLine(reticulePos, targetPos, &hit))
+			{
+				if (VSize(position - hit) < VSize(position - nearHitPos))
+				{
+					nearHitPos = hit;
+					nearEnemy = e;
+				}
+			}
+		}
+	}
+
+	// ダメージを与える
+	if (nearEnemy != nullptr)
+	{
+		nearEnemy->Damage(attack);
+		nearEnemy = nullptr;
+	}
+
+	return nearHitPos;
 }

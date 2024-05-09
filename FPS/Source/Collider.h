@@ -7,7 +7,6 @@
 class Collider
 {
 public:
-	int hModel;
 
 	/// <summary>
 	/// 地面との当たり判定
@@ -17,8 +16,5 @@ public:
 	/// <param name="p2">点2</param>
 	/// <param name="hitPos">衝突があった場所の座標</param>
 	/// <returns>当たったらtrue</returns>
-	virtual bool CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos = nullptr);
-
-	// Bullet.cppで全オブジェクトのCollLineを確認したい
-	// 当たったら、最も距離が近いものの座標を取得する
+	virtual bool CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos = nullptr) { return false; };
 };

@@ -17,37 +17,46 @@ public:
 	/// 銃弾の生成位置を代入する
 	/// </summary>
 	/// <param name="pos">生成位置</param>
-	void SetPosition(VECTOR pos);
+	void SetPosition(VECTOR pos) { position = pos; }
 
 	/// <summary>
 	/// 銃弾の生成角度を代入する
 	/// </summary>
 	/// <param name="rot">生成角度</param>
-	void SetRotation(VECTOR rot);
+	void SetRotation(VECTOR rot) { rotation = rot; }
 
 	/// <summary>
 	/// 目標物の座標を代入する
 	/// </summary>
 	/// <param name="target">目標座標</param>
-	void SetTarget(VECTOR target);
+	void SetTarget(VECTOR target)
+	{
+		targetPos = target;
+		dir = targetPos - position;
+		modelDir = targetPos - modelPosition;
+	}
 
 	/// <summary>
 	/// 銃弾モデルの生成位置を代入する
 	/// </summary>
 	/// <param name="pos">生成位置</param>
-	void SetModelPosition(VECTOR pos);
+	void SetModelPosition(VECTOR pos)
+	{
+		modelPosition = pos;
+		diff = modelPosition - position;
+	}
 
 	/// <summary>
 	/// 銃弾モデルの生成角度を代入する
 	/// </summary>
 	/// <param name="pos">生成角度</param>
-	void SetModelRotation(VECTOR rot);
+	void SetModelRotation(VECTOR rot) { modelRotation = rot; }
 
 	/// <summary>
 	/// 銃弾モデルの生成角度を代入する
 	/// </summary>
 	/// <param name="rot">生成角度</param>
-	void SetModelMatrix(MATRIX mat);
+	void SetModelMatrix(MATRIX mat) { matrix = mat; }
 
 private:
 	int hModel;
@@ -59,7 +68,7 @@ private:
 	VECTOR dir; //移動方向
 	VECTOR targetPos = VGet(0, 0, 0);
 
-	VECTOR diff; // 判定とモデルの差
+	VECTOR diff; // 実際の座標とモデルが表示される座標の差
 	VECTOR modelPosition;
 	VECTOR modelRotation;
 	MATRIX matrix;

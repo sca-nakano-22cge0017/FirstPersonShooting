@@ -36,8 +36,8 @@ void Player::Update()
 	VECTOR move;
 
 	//FƒL[“¯‰Ÿ‚µ‚ÅˆÚ“®‘¬“xã¸
-	if (CheckHitKey(KEY_INPUT_F)) move = VGet(0, 0, 2) * runSpeed;
-	else move = VGet(0, 0, 2);
+	if (CheckHitKey(KEY_INPUT_F)) move = VGet(0, 0, speed) * runSpeedTimes;
+	else move = VGet(0, 0, speed);
 
 	VECTOR forward = move * rotY;
 	VECTOR right = forward * MGetRotY(-0.5 * DX_PI);

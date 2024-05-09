@@ -9,13 +9,13 @@
 #include "UI.h"
 #include "Gun.h"
 #include "Bullet.h"
-#include "Target.h"
+#include "Warzombie.h"
 
 PlayScene::PlayScene()
 {
 	Instantiate<Stage>();
 	Instantiate<Player>();
-	Instantiate<Target>();
+	Instantiate<Warzombie>();
 	Instantiate<Gun>();
 	Instantiate<UI>();
 

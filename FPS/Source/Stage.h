@@ -10,9 +10,10 @@ public:
 	void Update() override;
 	void Draw() override;
 	
-	//bool CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos = nullptr) override;
+	bool CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos = nullptr) override;
 
 private:
+	int hModel;
 	VECTOR position;
 	VECTOR rotation;
 };

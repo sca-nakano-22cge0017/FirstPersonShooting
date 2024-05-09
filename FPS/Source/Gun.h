@@ -1,6 +1,8 @@
 #pragma once
 #include "../Library/GameObject.h"
 #include "Player.h"
+#include "Stage.h"
+#include "Enemy.h"
 
 class Gun : public GameObject
 {
@@ -44,11 +46,21 @@ private:
 	const float coolTime = 1.0f;
 	float elapsedTime;
 
+	float attack = 10; // 攻撃力
+
 	void Fire(); //発砲処理
-	VECTOR TargetAcquisition(); //標的捕捉
-	VECTOR hitPos = VGet(0, 0, 0); //標的の位置
+
+	/// <summary>
+	/// 着弾位置計算
+	/// </summary>
+	/// <returns>着弾位置</returns>
+	VECTOR TargetAcquisition();
+	VECTOR reticulePos; // レティクルのワールド座標
+	VECTOR targetPos = VGet(0, 0, 0); //弾の目標位置
 
 	VECTOR bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f); //Gunから見て銃弾を生成する座標
 
 	Player* player;
+
+	std::list<Enemy*> enemies; //敵のリスト
 };

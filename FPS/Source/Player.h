@@ -36,8 +36,10 @@ private:
 
 	const VECTOR playerHeight = VGet(0, 100, 0);
 
+	const float speed = 5;
+
 	//‘–‚è
-	const float runSpeed = 2;
+	const float runSpeedTimes = 1.5f; // ‘–‚è‚Ì‘¬“xã¸”{—¦
 
 	//“–‚½‚è”»’è
 	void CollCheck();
