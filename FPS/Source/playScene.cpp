@@ -6,6 +6,7 @@
 #include "Screen.h"
 #include "Player.h"
 #include "Stage.h"
+#include "Wall.h"
 #include "UI.h"
 #include "Gun.h"
 #include "Bullet.h"
@@ -14,6 +15,7 @@
 PlayScene::PlayScene()
 {
 	Instantiate<Stage>();
+	Instantiate<Wall>();
 	Instantiate<Player>();
 	Instantiate<Warzombie>();
 	Instantiate<Gun>();

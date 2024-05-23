@@ -33,7 +33,7 @@ public:
 	{
 		targetPos = target;
 		dir = targetPos - position;
-		modelDir = targetPos - modelPosition;
+		dirSize = VSize(targetPos - modelPosition);
 	}
 
 	/// <summary>
@@ -72,7 +72,8 @@ private:
 	VECTOR modelPosition;
 	VECTOR modelRotation;
 	MATRIX matrix;
-	VECTOR modelDir;
+
+	float dirSize;
 
 	Gun* gun;
 };

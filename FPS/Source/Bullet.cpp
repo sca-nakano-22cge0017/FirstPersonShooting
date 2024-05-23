@@ -20,8 +20,8 @@ void Bullet::Update()
 {
 	position += VNorm(dir) * speed;
 	
-	//! ”ò‹——£‚É‚æ‚Á‚Ä’²®’l‚ğ•Ï‚¦‚é
-	if (diff.y < 0) diff += VGet(0, 0.1f, 0);
+	// ƒ‚ƒfƒ‹ˆÊ’u’²®
+	if (diff.y < 0) diff += VGet(0, 1 / dirSize, 0);
 	modelPosition = position + diff;
 
 	if (VSize(targetPos - position) < 5)

@@ -119,6 +119,8 @@ VECTOR Gun::TargetAcquisition()
 		}
 	}
 
+	enemies = ObjectManager::FindGameObjects<Enemy>();
+
 	// Å‚à‹ß‚¢“G‚ð•Û‘¶
 	Enemy* nearEnemy = nullptr;
 
@@ -144,6 +146,8 @@ VECTOR Gun::TargetAcquisition()
 		nearEnemy->Damage(attack);
 		nearEnemy = nullptr;
 	}
+
+	enemies.clear();
 
 	return nearHitPos;
 }

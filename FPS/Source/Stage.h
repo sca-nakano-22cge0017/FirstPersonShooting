@@ -1,8 +1,7 @@
 #pragma once
-#include "../Library/GameObject.h"
-#include "Collider.h"
+#include "StageObjects.h"
 
-class Stage : public GameObject, public Collider
+class Stage : public StageObjects
 {
 public:
 	Stage();
