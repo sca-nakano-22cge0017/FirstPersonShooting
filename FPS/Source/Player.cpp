@@ -79,24 +79,6 @@ void Player::ViewRotate(float moveX, float moveY)
 
 void Player::CollCheck()
 {
-	//Stage* pStage = ObjectManager::FindGameObject<Stage>();
-	//if (pStage != nullptr) {
-	//	VECTOR groundHit;
-	//	if (pStage->CollLine(position, position + VGet(0, -110, 0), &groundHit))
-	//	{
-	//		if(!isJumping) // ƒWƒƒƒ“ƒv’†‚Å‚È‚¯‚ê‚Î
-	//			position = groundHit + playerHeight; // position‚ğ’n–Ê‚É‡‚í‚¹‚é
-	// 
-	//		if (position.y <= groundHit.y + playerHeight.y)
-	//		{
-	//			isGround = true;
-	//			isJumping = false;
-	//		}
-	//		else isGround = false;
-	//	}
-	//	else isGround = false;
-	//}
-
 	VECTOR nearHitPos = position - VGet(0, -500, 0);
 	bool hit = false;
 

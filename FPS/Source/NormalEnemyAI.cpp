@@ -3,6 +3,7 @@
 #include "NormalEnemy.h"
 #include "NormalEnemyAI.h"
 #include "Player.h"
+#include "StageObjects.h"
 
 NormalEnemyAI::NormalEnemyAI(NormalEnemy* p)
 {
@@ -16,10 +17,15 @@ NormalEnemyAI::~NormalEnemyAI()
 
 void NormalEnemyAI::Update()
 {
+	rootNode->Update();
 }
 
 Node::~Node()
 {
+	for (Node* c : children) {
+		delete c;
+	}
+	children.clear();
 }
 
 bool Node::NeedEnable()
@@ -34,6 +40,14 @@ bool Node::Update()
 
 bool EnemyAvoid::NeedEnable()
 {
+	// プレイヤーの射線上にいた場合 かつ プレイヤーが敵前方にいた場合、左右どちらかに避ける
+	NormalEnemy* eObj = dynamic_cast<NormalEnemy*>(object);
+
+	if (eObj->HitCheck())
+	{
+
+	}
+
 	return false;
 }
 
@@ -44,6 +58,21 @@ bool EnemyAvoid::Update()
 
 bool EnemyHide::NeedEnable()
 {
+	// プレイヤーが一定範囲内にいる場合、隠れる
+
+	// 敵の座標
+	NormalEnemy* eObj = dynamic_cast<NormalEnemy*>(object);
+	VECTOR ePos = eObj->GetPosition();
+
+	// プレイヤーの座標
+	Player* pPl = ObjectManager::FindGameObject<Player>();
+	VECTOR pPos = pPl->GetPosition();
+
+	if (VSquareSize(ePos - pPos) < 200 * 200)
+	{
+		return true;
+	}
+
 	return false;
 }
 
@@ -54,6 +83,7 @@ bool EnemyHide::Update()
 
 bool EnemyAttack::NeedEnable()
 {
+	// プレイヤーが射程範囲内にいれば射撃する
 	return false;
 }
 
@@ -64,6 +94,7 @@ bool EnemyAttack::Update()
 
 bool EnemyApproach::NeedEnable()
 {
+	// プレイヤーが射程範囲内にいなければランダム移動orプレイヤーに向かって移動する
 	return false;
 }
 
@@ -74,14 +105,37 @@ bool EnemyApproach::Update()
 
 Selector::Selector(GameObject* obj) : Node(obj)
 {
+	children.push_back(new EnemyAvoid(obj));
+	children.push_back(new EnemyHide(obj));
+	children.push_back(new EnemyAttack(obj));
+	children.push_back(new EnemyApproach(obj));
+	selected = nullptr;
 }
 
 bool Selector::NeedEnable()
 {
+	// childrenを順番に見て、NeedEnableのものがあればtrue
+	for (Node* c : children)
+	{
+		if (c->NeedEnable())
+		{
+			selected = c;
+			return true;
+		}
+	}
+	selected = nullptr;
 	return false;
 }
 
 bool Selector::Update()
 {
+	// 今選んでいるものを実行し、終わったらtrue
+	if (selected == nullptr || selected->Update()) {
+		if (NeedEnable()) {
+			return false;
+		}
+		selected = nullptr;
+		return true;
+	}
 	return false;
 }

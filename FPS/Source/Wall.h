@@ -14,6 +14,9 @@ public:
 	void SetPosition(VECTOR pos) override { position = pos; }
 	void SetRotation(VECTOR rot) override { rotation = rot; }
 
+	VECTOR GetPosition() override { return position; }
+	VECTOR GetRotation() override { return rotation; }
+
 private:
 	int hModel;
 	VECTOR position;

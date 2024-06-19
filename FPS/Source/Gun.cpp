@@ -111,6 +111,8 @@ VECTOR Gun::TargetAcquisition()
 	// レティクルから飛ばされた線分が衝突したものの座標のうち、もっともプレイヤーに近い座標を保存
 	VECTOR nearHitPos = targetPos;
 
+	Collider* nearObj = nullptr;
+
 	objects = ObjectManager::FindGameObjects<StageObjects>();
 	for (StageObjects* o : objects)
 	{
@@ -136,6 +138,9 @@ VECTOR Gun::TargetAcquisition()
 	{
 		VECTOR hit;
 		if (e != nullptr) {
+
+			e->HitCheck(false);
+
 			if (e->CollLine(reticulePos, targetPos, &hit))
 			{
 				if (VSize(position - hit) < VSize(position - nearHitPos))
@@ -145,6 +150,12 @@ VECTOR Gun::TargetAcquisition()
 				}
 			}
 		}
+	}
+
+	if (nearEnemy != nullptr)
+	{
+		// 一番近い敵に射撃できる
+		nearEnemy->HitCheck(true);
 	}
 
 	objects.clear();
