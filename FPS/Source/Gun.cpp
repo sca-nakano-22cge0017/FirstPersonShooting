@@ -6,6 +6,7 @@
 #include "Bullet.h"
 #include "Stage.h"
 #include "Enemy.h"
+#include "Camera.h"
 #include "Collider.h"
 
 /// <summary>
@@ -37,7 +38,10 @@ void Gun::Update()
 {
 	//カメラを中心にして銃を回転させ、常に視点内に銃を表示する
 	VECTOR playerRot = player->GetRotation();
-	VECTOR cameraPos = player->GetCameraPos();
+
+	Camera* cam = ObjectManager::FindGameObject<Camera>();
+	VECTOR cameraPos = player->GetPosition() + cam->GetRelativePos();
+
 	//もとの座標 * x軸回転行列 * y軸回転行列 * 移動座標(回転の中心座標を入れる)
 	position = basePos * MGetRotX(playerRot.x) * MGetRotY(playerRot.y) * MGetTranslate(cameraPos);
 	
@@ -107,23 +111,26 @@ VECTOR Gun::TargetAcquisition()
 	// レティクルから飛ばされた線分が衝突したものの座標のうち、もっともプレイヤーに近い座標を保存
 	VECTOR nearHitPos = targetPos;
 
-	Stage* pStage = ObjectManager::FindGameObject<Stage>();
-	if (pStage != nullptr) {
+	objects = ObjectManager::FindGameObjects<StageObjects>();
+	for (StageObjects* o : objects)
+	{
 		VECTOR hit;
-		if (pStage->CollLine(reticulePos, targetPos, &hit))
+		if (o != nullptr)
 		{
-			if (VSize(position - hit) < VSize(position - nearHitPos))
+			if (o->CollLine(reticulePos, targetPos, &hit))
 			{
-				nearHitPos = hit;
+				if (VSize(position - hit) < VSize(position - nearHitPos))
+				{
+					nearHitPos = hit;
+				}
 			}
 		}
 	}
 
-	enemies = ObjectManager::FindGameObjects<Enemy>();
-
 	// 最も近い敵を保存
 	Enemy* nearEnemy = nullptr;
 
+	enemies = ObjectManager::FindGameObjects<Enemy>();
 	// もっとも近い位置の敵を取得する
 	for (Enemy* e : enemies)
 	{
@@ -140,13 +147,7 @@ VECTOR Gun::TargetAcquisition()
 		}
 	}
 
-	// ダメージを与える
-	if (nearEnemy != nullptr)
-	{
-		nearEnemy->Damage(attack);
-		nearEnemy = nullptr;
-	}
-
+	objects.clear();
 	enemies.clear();
 
 	return nearHitPos;

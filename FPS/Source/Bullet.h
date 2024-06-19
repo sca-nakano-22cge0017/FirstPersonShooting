@@ -63,7 +63,15 @@ private:
 	VECTOR position;
 	VECTOR rotation;
 
-	float speed = 600.0f / 60;
+	float speed = 800.0f / 60;
+
+	float attack = 10; // 攻撃力
+
+	/// <summary>
+	/// 衝突判定
+	/// </summary>
+	void CollCheck();
+	bool isColl;
 
 	VECTOR dir; //移動方向
 	VECTOR targetPos = VGet(0, 0, 0);
@@ -76,4 +84,7 @@ private:
 	float dirSize;
 
 	Gun* gun;
+
+	std::list<StageObjects*> objects; // ステージ上のオブジェクト/障害物のリスト
+	std::list<Enemy*> enemies; // 敵のリスト
 };

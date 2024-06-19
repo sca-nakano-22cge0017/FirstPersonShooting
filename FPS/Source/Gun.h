@@ -58,9 +58,10 @@ private:
 	VECTOR reticulePos; // レティクルのワールド座標
 	VECTOR targetPos = VGet(0, 0, 0); //弾の目標位置
 
-	VECTOR bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f); //Gunから見て銃弾を生成する座標
+	VECTOR bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f); // Gunから見て銃弾を生成する座標
 
 	Player* player;
 
-	std::list<Enemy*> enemies; //敵のリスト
+	std::list<StageObjects*> objects; // ステージ上のオブジェクト/障害物のリスト
+	std::list<Enemy*> enemies; // 敵のリスト
 };

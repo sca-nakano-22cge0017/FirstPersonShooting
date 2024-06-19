@@ -13,13 +13,6 @@ Player::Player()
 	isJumping = false;
 	lastJumpKey = false;
 	vy = 0;
-
-	lastMouseX = Screen::WIDTH / 2;
-	lastMouseY = Screen::HEIGHT / 2;
-	mouseX = mouseY = 0;
-
-	//カメラの表示範囲設定
-	SetCameraNearFar(0.1f, 4000.0f);
 }
 
 Player::~Player()
@@ -63,7 +56,6 @@ void Player::Update()
 
 	CollCheck();
 	Jump();
-	ViewPoint();
 
 	Debug();
 }
@@ -72,25 +64,72 @@ void Player::Draw()
 {
 }
 
+void Player::ViewRotate(float moveX, float moveY)
+{
+	rotation.y += moveX;
+
+	//上下方向への視点移動に制限を掛ける
+	if (rotXMin <= rotation.x && rotXMax >= rotation.x)
+	{
+		rotation.x += moveY;
+	}
+	else if (rotXMin > rotation.x) rotation.x = rotXMin;
+	else if (rotXMax < rotation.x) rotation.x = rotXMax;
+}
+
 void Player::CollCheck()
 {
-	Stage* pStage = ObjectManager::FindGameObject<Stage>();
-	if (pStage != nullptr) {
-		VECTOR groundHit;
-		if (pStage->CollLine(position, position + VGet(0, -110, 0), &groundHit))
-		{
-			if(!isJumping) // ジャンプ中でなければ
-				position = groundHit + playerHeight; // positionを地面に合わせる
+	//Stage* pStage = ObjectManager::FindGameObject<Stage>();
+	//if (pStage != nullptr) {
+	//	VECTOR groundHit;
+	//	if (pStage->CollLine(position, position + VGet(0, -110, 0), &groundHit))
+	//	{
+	//		if(!isJumping) // ジャンプ中でなければ
+	//			position = groundHit + playerHeight; // positionを地面に合わせる
+	// 
+	//		if (position.y <= groundHit.y + playerHeight.y)
+	//		{
+	//			isGround = true;
+	//			isJumping = false;
+	//		}
+	//		else isGround = false;
+	//	}
+	//	else isGround = false;
+	//}
 
-			if (position.y <= groundHit.y + playerHeight.y)
+	VECTOR nearHitPos = position - VGet(0, -500, 0);
+	bool hit = false;
+
+	objects = ObjectManager::FindGameObjects<Collider>();
+	for (Collider* o : objects)
+	{
+		VECTOR groundHit;
+		if (o != nullptr)
+		{
+			if (o->CollLine(position, position + VGet(0, -300, 0), &groundHit))
 			{
-				isGround = true;
-				isJumping = false;
+				if (VSize(position - groundHit) < VSize(position - nearHitPos))
+				{
+					nearHitPos = groundHit;
+					hit = true;
+				}
 			}
-			else isGround = false;
+		}
+	}
+
+	if (hit)
+	{
+		if (!isJumping) // ジャンプ中でなければ
+			position = nearHitPos + playerHeight; // positionを地面に合わせる
+
+		if (position.y <= nearHitPos.y + playerHeight.y)
+		{
+			isGround = true;
+			isJumping = false;
 		}
 		else isGround = false;
 	}
+	else isGround = false;
 }
 
 const float g = 9.8f; //重力加速度
@@ -123,31 +162,6 @@ void Player::Jump()
 		vy -= g / 60;
 		position.y += vy;
 	}
-}
-
-void Player::ViewPoint() //視点移動
-{
-	//マウスの座標を取得
-	GetMousePoint(&mouseX, &mouseY);
-
-	//マウスの移動量からカメラの回転角度を算出・設定する
-	int moveX = mouseX - lastMouseX;
-	int moveY = mouseY - lastMouseY;
-
-	lastMouseX = mouseX;
-	lastMouseY = mouseY;
-
-	rotation.y += moveX * moveSpeed;
-
-	//上下方向への視点移動に制限を掛ける
-	if (rotXMin <= rotation.x && rotXMax >= rotation.x)
-	{
-		rotation.x += moveY * moveSpeed;
-	}
-	else if (rotXMin > rotation.x) rotation.x = rotXMin;
-	else if (rotXMax < rotation.x) rotation.x = rotXMax;
-
-	SetCameraPositionAndAngle(position + cameraPos, rotation.x, rotation.y, 0);
 }
 
 void Player::Damage()

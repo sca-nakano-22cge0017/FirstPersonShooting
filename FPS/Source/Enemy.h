@@ -1,6 +1,4 @@
 #pragma once
-#include "../Library/GameObject.h"
-#include "Player.h"
 #include "Collider.h"
 
 class Enemy : public Collider

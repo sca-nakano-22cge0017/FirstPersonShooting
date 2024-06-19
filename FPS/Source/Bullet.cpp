@@ -10,6 +10,8 @@ Bullet::Bullet()
 	assert(gun != nullptr);
 
 	hModel = MV1LoadModel("data/Gun/Bullet1.mv1");
+
+	isColl = false;
 }
 
 Bullet::~Bullet()
@@ -24,7 +26,9 @@ void Bullet::Update()
 	if (diff.y < 0) diff += VGet(0, 1 / dirSize, 0);
 	modelPosition = position + diff;
 
-	if (VSize(targetPos - position) < 5)
+	CollCheck();
+
+	if (VSize(targetPos - position) < 5 || isColl)
 	{
 		DestroyMe(); //íœ
 	}
@@ -40,4 +44,38 @@ void Bullet::Draw()
 	}
 
 	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "x= %f, \ny= %f, \nz= %f", position.x, position.y, position.z);
+}
+
+void Bullet::CollCheck()
+{
+	objects = ObjectManager::FindGameObjects<StageObjects>();
+	for (StageObjects* o : objects)
+	{
+		VECTOR hit;
+		if (o != nullptr)
+		{
+			if (o->CollLine(position, position + VGet(10, 0, 0), &hit))
+			{
+				isColl = true;
+			}
+		}
+	}
+
+	enemies = ObjectManager::FindGameObjects<Enemy>();
+	for (Enemy* e : enemies)
+	{
+		VECTOR hit;
+		if (e != nullptr) {
+			if (e->CollLine(position, position + VGet(10, 0, 0), &hit))
+			{
+				isColl = true;
+
+				// ƒ_ƒ[ƒW‚ð—^‚¦‚é
+				e->Damage(attack);
+			}
+		}
+	}
+
+	objects.clear();
+	enemies.clear();
 }

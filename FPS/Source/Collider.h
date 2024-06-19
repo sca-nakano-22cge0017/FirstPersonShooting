@@ -1,15 +1,13 @@
 #pragma once
-#include "../Library/GameObject.h"
 
 /// <summary>
-/// 当たり判定　継承する
+/// 当たり判定の基底クラス
 /// </summary>
 class Collider
 {
 public:
 
 	/// <summary>
-	/// 地面との当たり判定
 	/// p1とp2を繋ぐ線分に当たったら、hitPosに当たった部分の座標を入れる
 	/// </summary>
 	/// <param name="p1">点1</param>

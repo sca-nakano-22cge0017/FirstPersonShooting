@@ -4,22 +4,26 @@
 #include "../Library/Time.h"
 #include <DxLib.h>
 #include "Screen.h"
+#include "Camera.h"
+#include "StageCreate.h"
+#include "SkyDoom.h"
 #include "Player.h"
-#include "Stage.h"
-#include "Wall.h"
 #include "UI.h"
 #include "Gun.h"
 #include "Bullet.h"
-#include "Warzombie.h"
 
 PlayScene::PlayScene()
 {
-	Instantiate<Stage>();
-	Instantiate<Wall>();
+	Instantiate<StageCreate>();
 	Instantiate<Player>();
-	Instantiate<Warzombie>();
 	Instantiate<Gun>();
-	Instantiate<UI>();
+	Instantiate<SkyDoom>();
+	
+	Camera* cam = Instantiate<Camera>();
+	cam->SetDrawOrder(100); // •`‰æ‡•ÏX
+
+	UI* ui = Instantiate<UI>();
+	ui->SetDrawOrder(500);
 
 	ChangeLightTypeDir(VGet(0.0f, -1.0f, 0.0f));
 }
