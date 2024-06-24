@@ -15,6 +15,8 @@ public:
 
 	VECTOR GetRelativePos() { return relativePos; }
 
+	float GetRange() { return cameraRange; }
+
 private:
 	VECTOR position;
 	VECTOR rotation;
@@ -23,6 +25,8 @@ private:
 	Player* player;
 	VECTOR playerPos;
 	VECTOR playerRot;
+
+	float cameraRange = 12000.0f;
 
 	//Ž‹“_ˆÚ“®
 	int lastMouseX, lastMouseY;

@@ -8,7 +8,7 @@ Camera::Camera()
 	mouseX = mouseY = 0;
 
 	//ƒJƒƒ‰‚Ì•\¦”ÍˆÍİ’è
-	SetCameraNearFar(0.1f, 12000.0f);
+	SetCameraNearFar(0.1f, cameraRange);
 
 	player = ObjectManager::FindGameObject<Player>();
 }

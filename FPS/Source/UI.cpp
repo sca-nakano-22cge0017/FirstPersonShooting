@@ -10,7 +10,7 @@ UI::UI()
 	player = ObjectManager::FindGameObject<Player>();
 	assert(player != nullptr);
 
-	gun = ObjectManager::FindGameObject<Gun>();
+	gun = ObjectManager::FindGameObject<PlayersGun>();
 	assert(player != nullptr);
 
 	hp = player->GetHp();
@@ -31,7 +31,6 @@ void UI::Update()
 
 void UI::Draw()
 {
-	DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));
 	DrawString(0, Screen::HEIGHT - 50, "Push [T]Key To Title", GetColor(255, 255, 255));
 
 	//HP•\Ž¦

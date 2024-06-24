@@ -18,8 +18,8 @@ public:
 
 protected:
 	list<Node*> children;
-	Node* parent;
-	GameObject* object;
+	Node* parent = nullptr;
+	GameObject* object = nullptr;
 };
 
 class NormalEnemyAI {
@@ -32,6 +32,7 @@ private:
 	Node* rootNode;
 };
 
+// îÇØÇÈ
 class EnemyAvoid : public Node {
 public:
 	EnemyAvoid(GameObject* obj) : Node(obj){}
@@ -39,6 +40,7 @@ public:
 	bool Update() override;
 };
 
+// âBÇÍÇÈ
 class EnemyHide : public Node {
 public:
 	EnemyHide(GameObject* obj) : Node(obj) {}
@@ -46,16 +48,10 @@ public:
 	bool Update() override;
 };
 
+// çUåÇÇ∑ÇÈ
 class EnemyAttack : public Node {
 public:
 	EnemyAttack(GameObject* obj) : Node(obj) {}
-	bool NeedEnable() override;
-	bool Update() override;
-};
-
-class EnemyApproach : public Node {
-public:
-	EnemyApproach(GameObject* obj) : Node(obj) {}
 	bool NeedEnable() override;
 	bool Update() override;
 };
@@ -66,5 +62,5 @@ public:
 	bool NeedEnable() override;
 	bool Update() override;
 protected:
-	Node* selected;
+	Node* selected = nullptr;
 };

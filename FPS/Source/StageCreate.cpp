@@ -9,7 +9,7 @@ StageCreate::StageCreate()
 {
 	Instantiate<Stage>();
 	Instantiate<NormalEnemy>();
-	Instantiate<Wall>();
+	//Instantiate<Wall>();
 }
 
 StageCreate::~StageCreate()

@@ -1,6 +1,9 @@
 #pragma once
 #include "../Library/GameObject.h"
 #include "Gun.h"
+#include "StageObjects.h"
+#include "Enemy.h"
+#include "Player.h"
 
 /// <summary>
 /// èeíe
@@ -8,7 +11,7 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet();
+	Bullet(Gun* obj);
 	~Bullet();
 	void Update() override;
 	void Draw() override;
@@ -63,7 +66,7 @@ private:
 	VECTOR position;
 	VECTOR rotation;
 
-	float speed = 800.0f / 60;
+	float speed = 1000.0f / 60;
 
 	float attack = 10; // çUåÇóÕ
 
@@ -80,6 +83,8 @@ private:
 	VECTOR modelPosition;
 	VECTOR modelRotation;
 	MATRIX matrix;
+
+	float dis; // îÚçsãóó£
 
 	float dirSize;
 

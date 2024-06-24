@@ -4,19 +4,17 @@
 #include "../Library/Time.h"
 #include <DxLib.h>
 #include "Screen.h"
+#include "Player.h"
 #include "Camera.h"
 #include "StageCreate.h"
 #include "SkyDoom.h"
-#include "Player.h"
 #include "UI.h"
-#include "Gun.h"
 #include "Bullet.h"
 
 PlayScene::PlayScene()
 {
-	Instantiate<StageCreate>();
 	Instantiate<Player>();
-	Instantiate<Gun>();
+	Instantiate<StageCreate>();
 	Instantiate<SkyDoom>();
 	
 	Camera* cam = Instantiate<Camera>();

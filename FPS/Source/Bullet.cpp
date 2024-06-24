@@ -4,23 +4,34 @@
 #include "Stage.h"
 #include "Enemy.h"
 
-Bullet::Bullet()
+Bullet::Bullet(Gun* obj)
 {
-	gun = ObjectManager::FindGameObject<Gun>();
-	assert(gun != nullptr);
-
 	hModel = MV1LoadModel("data/Gun/Bullet1.mv1");
 
+	gun = obj;
+	assert(gun != nullptr);
+
 	isColl = false;
+	dis = 0;
+	position = VGet(0, 0, 0);
+	rotation = VGet(0, 0, 0);
+	modelPosition = VGet(0, 0, 0);
+	modelRotation = VGet(0, 0, 0);
+	matrix = MGetRotX(0) * MGetRotY(0) * MGetRotZ(0);
 }
 
 Bullet::~Bullet()
 {
+	if (hModel > 0)
+	{
+		MV1DeleteModel(hModel);
+	}
 }
 
 void Bullet::Update()
 {
 	position += VNorm(dir) * speed;
+	dis += speed;
 	
 	// モデル位置調整
 	if (diff.y < 0) diff += VGet(0, 1 / dirSize, 0);
@@ -28,7 +39,8 @@ void Bullet::Update()
 
 	CollCheck();
 
-	if (VSize(targetPos - position) < 5 || isColl)
+	// 射程距離まで飛んだ　もしくは　何かに衝突したら
+	if (dis >= gun->GetRange() || isColl)
 	{
 		DestroyMe(); //削除
 	}
@@ -42,8 +54,6 @@ void Bullet::Draw()
 		MV1SetRotationMatrix(hModel, matrix);
 		MV1DrawModel(hModel);
 	}
-
-	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "x= %f, \ny= %f, \nz= %f", position.x, position.y, position.z);
 }
 
 void Bullet::CollCheck()

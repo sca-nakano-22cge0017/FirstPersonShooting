@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "animation.h"
 #include "NormalEnemyAI.h"
+#include "EnemiesGun.h"
 
 class NormalEnemy : public GameObject, public Enemy
 {
@@ -18,32 +19,42 @@ public:
 	VECTOR GetPosition() override { return position; }
 	VECTOR GetRotation() override { return rotation; }
 
+	void Attack();
+
 	void Damage(int damage) override;
 
-	void HitCheck(bool _isHit) override { isHit = _isHit; }
-	bool HitCheck() override { return isHit; }
-
+	// 地面判定
 	void GroundCheck() override;
 
-	bool CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos = nullptr) override;
+	// プレイヤーの弾が当たるかどうかを設定・取得
+	void CanHitCheck(bool _isHit) override { isHit = _isHit; }
+	bool CanHitCheck() override { return isHit; }
 
 private:
-	int hModel;
-	VECTOR position;
-	VECTOR rotation;
-
-	VECTOR height = VGet(0, 5, 0);
-
-	int hp;
-	const int defaultHp = 100;
-
-	int moveSpeed = 5;
-
-	bool isHit; // プレイヤーの攻撃が当たるかどうか
-
 	Player* player;
 	NormalEnemyAI* ai;
 
+	VECTOR position;
+	VECTOR rotation;
+
+	VECTOR heightAdjust = VGet(0, 5, 0); //高さ調整
+
+	string modelFile = "data/Enemy/NormalEnemy_1.mv1";
+
+	// アニメーション
+	string animationFolder = "data/Enemy/Animation/";
+	string animationFilename[9] =
+	{
+		"Rifle Idle",
+		"Rifle Walk",
+		"Firing Rifle",
+		"Stand To Crouch",
+		"Crouch To Standing With Rifle",
+		"Hit Reaction",
+		"Dying",
+		"Death From Front Headshot",
+		"Death From Back Headshot"
+	};
 	Animation* animation;
 	enum ANIM_ID {
 		A_NOTHING = -1,
@@ -59,4 +70,13 @@ private:
 		MAX
 	};
 	int hAnimation[MAX];
+
+	int hp;
+	const int initHp = 10; // 初期体力
+	int moveSpeed = 5; // 移動速度
+
+	Gun* gun = nullptr;
+	bool attacking; // 攻撃中かどうか
+
+	bool isHit; // プレイヤーの攻撃が当たるかどうか
 };

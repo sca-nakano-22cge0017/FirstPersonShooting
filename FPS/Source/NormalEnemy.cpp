@@ -2,35 +2,27 @@
 
 NormalEnemy::NormalEnemy()
 {
-	hp = defaultHp;
-
 	player = ObjectManager::FindGameObject<Player>();
 	ai = new NormalEnemyAI(this);
+	assert(ai != nullptr);
+	gun = new EnemiesGun(this);
+	assert(gun != nullptr);
 
-	hModel = MV1LoadModel("data/Enemy/NormalEnemy_1.mv1");
+	position = VGet(300, 75, 300);
+	rotation = VGet(0, 0, 0);
+	hp = initHp;
+	attacking = false;
+	isHit = false;
+	
+	// モデル
+	hModel = MV1LoadModel(modelFile.c_str());
 	int root = MV1SearchFrame(hModel, "root");
 	MV1SetFrameUserLocalMatrix(hModel, root, MGetRotY(DX_PI_F));
 
-	position = VGet(0, 50, 0);
-	rotation = VGet(0, 0, 0);
-
 	//アニメーション
-	string folder = "data/Enemy/Animation/";
-	string filename[] =
-	{
-		"Rifle Idle",
-		"Rifle Walk",
-		"Firing Rifle",
-		"Stand To Crouch",
-		"Crouch To Standing With Rifle",
-		"Hit Reaction",
-		"Dying",
-		"Death From Front Headshot",
-		"Death From Back Headshot"
-	};
 	for (int i = 0; i < MAX; i++)
 	{
-		hAnimation[i] = MV1LoadModel((folder + filename[i] + ".mv1").c_str());
+		hAnimation[i] = MV1LoadModel((animationFolder + animationFilename[i] + ".mv1").c_str());
 	}
 	animation = new Animation();
 	animation->SetModel(hModel); //アニメーションを付けるモデル
@@ -39,20 +31,22 @@ NormalEnemy::NormalEnemy()
 
 NormalEnemy::~NormalEnemy()
 {
+	if (hModel > 0)
+	{
+		MV1DeleteModel(hModel);
+	}
 }
 
 void NormalEnemy::Update()
 {
 	animation->Update(); //アニメーションの再生
+	MV1RefreshCollInfo(hModel); // コリジョン情報の更新
 
-	MATRIX rotY = MGetRotY(rotation.y);
-	VECTOR move = VGet(0, 0, moveSpeed);
-	VECTOR forward = move * rotY;
-	VECTOR right = forward * MGetRotY(-0.5 * DX_PI);
-	VECTOR left = forward * MGetRotY(0.5 * DX_PI);
+	gun->SetPosition(position);
+
 	if (CheckHitKey(KEY_INPUT_C))
 	{
-		position += forward;
+		Attack();
 	}
 
 	GroundCheck();
@@ -69,6 +63,13 @@ void NormalEnemy::Draw()
 
 		MV1DrawModel(hModel);
 	}
+}
+
+void NormalEnemy::Attack()
+{
+	animation->Play(hAnimation[A_ATT], true);
+
+	gun->Fire();
 }
 
 void NormalEnemy::Damage(int damage)
@@ -100,22 +101,8 @@ void NormalEnemy::GroundCheck()
 
 	if (hit)
 	{
-		position = nearHitPos + height; // positionを地面に合わせる
+		position = nearHitPos + heightAdjust; // positionを地面に合わせる
 	}
 
 	objects.clear();
-}
-
-bool NormalEnemy::CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos)
-{
-	MV1_COLL_RESULT_POLY res = MV1CollCheck_Line(hModel, -1, p1, p2);
-	if (res.HitFlag) // 当たっている
-	{
-		if (hitPos != nullptr)
-		{
-			*hitPos = res.HitPosition;
-		}
-		return true;
-	}
-	return false;
 }

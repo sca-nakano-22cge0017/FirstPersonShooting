@@ -1,30 +1,51 @@
+#include "../ImGui/imgui.h"
 #include "Player.h"
 #include "Stage.h"
-#include "../ImGui/imgui.h"
-#include "Screen.h"
+using namespace std;
 
 Player::Player()
 {
+	gun = new PlayersGun(this);
+	assert(gun != nullptr);
+	
 	position = VGet(0, 200, 0);
-	rotation = VGet(0, -0.5f * DX_PI, 0);
-	hp = 100;
+	rotation = VGet(0, -0.5f * (float)DX_PI, 0);
 
-	isGround = true;
-	isJumping = false;
-	lastJumpKey = false;
 	vy = 0;
+	isGround = false;
+	lastJumpKey = false;
+	isJumping = false;
+
+	hp = InitHp;
+
+	hModel = MV1LoadModel("data/Player/Player.mv1");
+
+	//アニメーション
+	string folder = "data/Player/";
+	string fileName[] = {
+		"Standing Idle"
+	};
+	for (int i = 0; i < MAX; i++)
+	{
+		hAnimation[i] = MV1LoadModel((folder + fileName[i] + ".mv1").c_str());
+	}
+	animation = new Animation();
+	animation->SetModel(hModel); //アニメーションを付けるモデル
+	animation->Play(hAnimation[A_IDLE], true);
 }
 
 Player::~Player()
 {
-}
-
-void Player::Start()
-{
+	if (hModel > 0)
+	{
+		MV1DeleteModel(hModel);
+	}
 }
 
 void Player::Update()
 {
+	MV1RefreshCollInfo(hModel); // コリジョン情報の更新
+
 	MATRIX rotY = MGetRotY(rotation.y);
 	VECTOR move;
 
@@ -54,7 +75,7 @@ void Player::Update()
 		position += left;
 	}
 
-	CollCheck();
+	GroundCheck();
 	Jump();
 
 	Debug();
@@ -62,6 +83,12 @@ void Player::Update()
 
 void Player::Draw()
 {
+	if (hModel != -1)
+	{
+		MV1SetPosition(hModel, position + VGet(0, -100, 0));
+		MV1SetRotationXYZ(hModel, VGet(0, rotation.y + DX_PI, 0));
+		MV1DrawModel(hModel);
+	}
 }
 
 void Player::ViewRotate(float moveX, float moveY)
@@ -77,13 +104,13 @@ void Player::ViewRotate(float moveX, float moveY)
 	else if (rotXMax < rotation.x) rotation.x = rotXMax;
 }
 
-void Player::CollCheck()
+void Player::GroundCheck()
 {
 	VECTOR nearHitPos = position - VGet(0, -500, 0);
 	bool hit = false;
 
-	objects = ObjectManager::FindGameObjects<Collider>();
-	for (Collider* o : objects)
+	objects = ObjectManager::FindGameObjects<StageObjects>();
+	for (StageObjects* o : objects)
 	{
 		VECTOR groundHit;
 		if (o != nullptr)
@@ -144,10 +171,6 @@ void Player::Jump()
 		vy -= g / 60;
 		position.y += vy;
 	}
-}
-
-void Player::Damage()
-{
 }
 
 void Player::Debug()

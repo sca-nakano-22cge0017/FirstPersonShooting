@@ -1,7 +1,7 @@
 #pragma once
 #include "../Library/GameObject.h"
 #include "Player.h"
-#include "Gun.h"
+#include "PlayersGun.h"
 
 class UI : public GameObject
 {
@@ -12,7 +12,7 @@ public:
 	void Draw() override;
 private:
 	Player* player;
-	Gun* gun;
+	PlayersGun* gun;
 
 	int hp;
 	int fullBullets;

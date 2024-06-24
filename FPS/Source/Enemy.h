@@ -11,11 +11,17 @@ public:
 	virtual void Damage(int damage) {};
 
 	/// <summary>
-	/// プレイヤーの射線上にいるか（攻撃が当たるかどうか）を設定
+	/// 攻撃
+	/// </summary>
+	/// <param name="atk">攻撃力</param>
+	virtual void Attack(int atk) {};
+
+	/// <summary>
+	/// // プレイヤーの弾が当たるかどうかを設定・取得
 	/// </summary>
 	/// <param name="_isHit"></param>
-	virtual void HitCheck(bool _isHit) {};
-	virtual bool HitCheck() { return isHit; }
+	virtual void CanHitCheck(bool _isHit) {};
+	virtual bool CanHitCheck() { return isHit; }
 
 	/// <summary>
 	/// 生成位置を代入する
@@ -38,7 +44,9 @@ public:
 	virtual void GroundCheck() { };
 
 protected:
+	bool isHit;
+
+private:
 	VECTOR position;
 	VECTOR rotation;
-	bool isHit;
 };

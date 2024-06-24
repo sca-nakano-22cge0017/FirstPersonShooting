@@ -5,7 +5,10 @@
 /// <author>N.Hanai</author>
 
 #include "myDxLib.h"
+#include <assert.h>
 #include <string>
+#include <math.h>
+#include <vector>
 #include "SceneBase.h"
 #include "ObjectManager.h"
 

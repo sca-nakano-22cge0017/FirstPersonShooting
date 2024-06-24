@@ -1,67 +1,52 @@
 #pragma once
 #include "../Library/GameObject.h"
-#include "Player.h"
-#include "Stage.h"
-#include "Enemy.h"
 
+/// <summary>
+/// 銃
+/// </summary>
 class Gun : public GameObject
 {
 public:
-	Gun();
-	~Gun();
-	void Update() override;
-	void Draw() override;
+	virtual VECTOR GetPosition() { return position; }
+	virtual void SetPosition(VECTOR pos) {};
+
+	virtual VECTOR GetRotation() { return rotation; }
+	virtual void SetRotation(VECTOR rot) {};
 
 	/// <summary>
-	/// 銃の座標を取得する
+	/// 射程距離取得
 	/// </summary>
-	VECTOR GetPosition() { return position; }
+	/// <returns>射程距離</returns>
+	virtual float GetRange() { return range; }
 
 	/// <summary>
-	/// 銃の回転角度を取得する
+	/// 発砲処理
 	/// </summary>
-	VECTOR GetRotation() { return rotation; }
+	virtual void Fire() { };
 
 	/// <summary>
-	/// 最大弾数
+	/// 着弾位置の計算
 	/// </summary>
-	int GetFullBullets() { return fullBullets; }
-
-	/// <summary>
-	/// 残り弾数
-	/// </summary>
-	int GetRestBullets() { return restBullets; }
-
-private:
-	int hModel;
-	VECTOR position;
-	VECTOR rotation;
-	MATRIX matrix;
-
-	VECTOR basePos = VGet(0, -25, 50); //基本の座標　プレイヤーが初期位置から移動・回転していない場合の座標
-
-	int fullBullets; //最大弾数
-	int restBullets; //残弾数
-	bool lastHitKey;
-	const float coolTime = 1.0f;
-	float elapsedTime;
-
-	float attack = 10; // 攻撃力
-
-	void Fire(); //発砲処理
-
-	/// <summary>
-	/// 着弾位置計算
-	/// </summary>
+	/// <param name="start">生成位置</param>
+	/// <param name="target">目標</param>
 	/// <returns>着弾位置</returns>
-	VECTOR TargetAcquisition();
-	VECTOR reticulePos; // レティクルのワールド座標
+	virtual VECTOR TargetAcquisition(VECTOR start, VECTOR target) { return VGet(0, 0, 0); }
+
+protected:
+	int hModel = -1;
+	VECTOR position = VGet(0, 0, 0);
+	VECTOR rotation = VGet(0, 0, 0);
+	MATRIX matrix = MGetIdent();
+
+	// 銃を所持するキャラクターから見た相対的な座標
+	VECTOR relativelyPos = VGet(0, 0, 0);
+	VECTOR relativelyRot = VGet(0, 0, 0);
+
 	VECTOR targetPos = VGet(0, 0, 0); //弾の目標位置
 
-	VECTOR bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f); // Gunから見て銃弾を生成する座標
+	VECTOR bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f); // 銃から見て銃弾を生成する座標
 
-	Player* player;
-
-	std::list<StageObjects*> objects; // ステージ上のオブジェクト/障害物のリスト
-	std::list<Enemy*> enemies; // 敵のリスト
+private:
+	const float attack = 10; // 攻撃力
+	const float range = 1500; // 射程距離
 };

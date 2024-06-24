@@ -9,8 +9,6 @@ public:
 	void Update() override;
 	void Draw() override;
 
-	bool CollLine(VECTOR p1, VECTOR p2, VECTOR* hitPos = nullptr) override;
-
 	void SetPosition(VECTOR pos) override { position = pos; }
 	void SetRotation(VECTOR rot) override { rotation = rot; }
 
@@ -18,7 +16,6 @@ public:
 	VECTOR GetRotation() override { return rotation; }
 
 private:
-	int hModel;
 	VECTOR position;
 	VECTOR rotation;
 };

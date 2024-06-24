@@ -43,7 +43,7 @@ bool EnemyAvoid::NeedEnable()
 	// プレイヤーの射線上にいた場合 かつ プレイヤーが敵前方にいた場合、左右どちらかに避ける
 	NormalEnemy* eObj = dynamic_cast<NormalEnemy*>(object);
 
-	if (eObj->HitCheck())
+	if (eObj->CanHitCheck())
 	{
 
 	}
@@ -92,23 +92,11 @@ bool EnemyAttack::Update()
 	return false;
 }
 
-bool EnemyApproach::NeedEnable()
-{
-	// プレイヤーが射程範囲内にいなければランダム移動orプレイヤーに向かって移動する
-	return false;
-}
-
-bool EnemyApproach::Update()
-{
-	return false;
-}
-
 Selector::Selector(GameObject* obj) : Node(obj)
 {
 	children.push_back(new EnemyAvoid(obj));
 	children.push_back(new EnemyHide(obj));
 	children.push_back(new EnemyAttack(obj));
-	children.push_back(new EnemyApproach(obj));
 	selected = nullptr;
 }
 
