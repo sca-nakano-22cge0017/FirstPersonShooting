@@ -16,6 +16,9 @@ Player::Player()
 	lastJumpKey = false;
 	isJumping = false;
 
+	lastHitKey = false;
+	elapsedTime = coolTime;
+
 	hp = InitHp;
 
 	hModel = MV1LoadModel("data/Player/Player.mv1");
@@ -46,37 +49,10 @@ void Player::Update()
 {
 	MV1RefreshCollInfo(hModel); // コリジョン情報の更新
 
-	MATRIX rotY = MGetRotY(rotation.y);
-	VECTOR move;
-
-	//Fキー同時押しで移動速度上昇
-	if (CheckHitKey(KEY_INPUT_F)) move = VGet(0, 0, speed) * runSpeedTimes;
-	else move = VGet(0, 0, speed);
-
-	VECTOR forward = move * rotY;
-	VECTOR right = forward * MGetRotY(-0.5 * DX_PI);
-	VECTOR left = forward * MGetRotY(0.5 * DX_PI);
-
-	//WASD移動
-	if (CheckHitKey(KEY_INPUT_W))
-	{		
-		position += forward;
-	}
-	if (CheckHitKey(KEY_INPUT_S))
-	{
-		position -= forward;
-	}
-	if (CheckHitKey(KEY_INPUT_A))
-	{
-		position += right;
-	}
-	if (CheckHitKey(KEY_INPUT_D))
-	{
-		position += left;
-	}
-
 	GroundCheck();
 	Jump();
+	Move();
+	Attack();
 
 	Debug();
 }
@@ -102,6 +78,38 @@ void Player::ViewRotate(float moveX, float moveY)
 	}
 	else if (rotXMin > rotation.x) rotation.x = rotXMin;
 	else if (rotXMax < rotation.x) rotation.x = rotXMax;
+}
+
+void Player::Move()
+{
+	MATRIX rotY = MGetRotY(rotation.y);
+	VECTOR move;
+
+	//Fキー同時押しで移動速度上昇
+	if (CheckHitKey(KEY_INPUT_F)) move = VGet(0, 0, speed) * runSpeedTimes;
+	else move = VGet(0, 0, speed);
+
+	VECTOR forward = move * rotY;
+	VECTOR right = forward * MGetRotY(-0.5 * DX_PI);
+	VECTOR left = forward * MGetRotY(0.5 * DX_PI);
+
+	//WASD移動
+	if (CheckHitKey(KEY_INPUT_W))
+	{
+		position += forward;
+	}
+	if (CheckHitKey(KEY_INPUT_S))
+	{
+		position -= forward;
+	}
+	if (CheckHitKey(KEY_INPUT_A))
+	{
+		position += right;
+	}
+	if (CheckHitKey(KEY_INPUT_D))
+	{
+		position += left;
+	}
 }
 
 void Player::GroundCheck()
@@ -170,6 +178,29 @@ void Player::Jump()
 		//自由落下
 		vy -= g / 60;
 		position.y += vy;
+	}
+}
+
+void Player::Attack()
+{
+	if (gun == nullptr) return;
+
+	elapsedTime += 1.0f / 60.0f;
+
+	if (elapsedTime >= coolTime)
+	{
+		//左クリックで発砲
+		if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)
+		{
+			//押した瞬間なら
+			if (!lastHitKey)
+			{
+				lastHitKey = true;
+				gun->Fire();
+				elapsedTime = 0;
+			}
+		}
+		else lastHitKey = false;
 	}
 }
 

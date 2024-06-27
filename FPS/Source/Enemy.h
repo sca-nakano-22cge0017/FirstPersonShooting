@@ -10,6 +10,7 @@ public:
 	/// <param name="damage">ƒ_ƒ[ƒW—Ê</param>
 	virtual void Damage(int damage) {};
 
+	virtual int GetAtk() { return atk; }
 	/// <summary>
 	/// UŒ‚
 	/// </summary>
@@ -49,4 +50,5 @@ protected:
 private:
 	VECTOR position;
 	VECTOR rotation;
+	int atk;
 };

@@ -15,11 +15,9 @@ PlayersGun::PlayersGun(Player* p)
 
 	position = VGet(0, 0, 0);
 	rotation = VGet(0, 0, 0);
-	relativelyPos = VGet(0, -25, 50);
+	relativelyPos = VGet(0.0f, -25.0f, 50.0f);
 	bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f);
 
-	lastHitKey = false;
-	elapsedTime = 0;
 	fullBullets = 10;
 	restBullets = 10;
 }
@@ -48,18 +46,6 @@ void PlayersGun::Update()
 	rotation = VGet(0, playerRot.y + 0.5f * DX_PI, 0); //ƒvƒŒƒCƒ„[‚ÌŒü‚«‚É‘Î‚µ‚ÄƒfƒtƒHƒ‹ƒg‚Å90“x‰ñ“]‚µ‚Ä‚é‚Ì‚Å’²®
 	VECTOR right = VGet(1, 0, 0) * MGetRotY(playerRot.y);
 	matrix = MGetRotY(rotation.y) * MGetRotAxis(right, playerRot.x); //ƒvƒŒƒCƒ„[‚©‚çŒ©‚Ä‰E•ûŒü‚Ö‚ÌƒxƒNƒgƒ‹‚ð‰ñ“]Ž²‚É‚µ‚Ä‰ñ“]‚³‚¹‚é
-
-	//¶ƒNƒŠƒbƒN‚Å”­–C
-	if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0)
-	{
-		//‰Ÿ‚µ‚½uŠÔ‚È‚ç
-		if (!lastHitKey)
-		{
-			lastHitKey = true;
-			Fire();
-		}
-	}
-	else lastHitKey = false;
 }
 
 void PlayersGun::Draw()
@@ -82,23 +68,21 @@ void PlayersGun::Fire()
 	VECTOR reticulePos = ConvScreenPosToWorldPos(VGet(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0.0f));
 
 	//’e‚Ì¶¬
-	Bullet* bullet = new Bullet(this);
+	Bullet* bullet = new Bullet(this, false, true);
 
 	VECTOR hitPos = TargetAcquisition(reticulePos, target);
-
-	bullet->SetPosition(reticulePos);
-	bullet->SetTarget(hitPos);
 
 	// e’eƒ‚ƒfƒ‹‚Ì¶¬ˆÊ’uÝ’è
 	VECTOR modelPosition = position + bulletsCreatePos;
 	VECTOR modelRotation = VGet(0, rotation.y - DX_PI / 2, 0);
 
-	bullet->SetModelPosition(modelPosition);
-
 	// e’eƒ‚ƒfƒ‹‚ÌŒü‚«’²®
 	VECTOR playerRot = player->GetRotation();
 	VECTOR right = VGet(1, 0, 0) * MGetRotY(playerRot.y);
 	MATRIX bulletMatrix = MGetRotY(modelRotation.y) * MGetRotAxis(right, playerRot.x);
+
+	bullet->SetPosition(reticulePos, modelPosition);
+	bullet->SetTarget(hitPos);
 	bullet->SetModelMatrix(bulletMatrix);
 }
 

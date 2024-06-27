@@ -45,6 +45,7 @@ public:
 	void Damage(int damage) { hp -= damage; }
 
 	int GetHp() { return hp; }
+	int GetAtk() { return atk; }
 
 private:
 	VECTOR position;
@@ -53,6 +54,7 @@ private:
 	const VECTOR playerHeight = VGet(0, 100, 0);
 	const float speed = 5;
 	const float runSpeedTimes = 1.5f; // 走り時の速度上昇倍率
+	void Move();
 
 	//当たり判定
 	void GroundCheck();
@@ -63,19 +65,24 @@ private:
 	float vy; //Y軸方向の速度
 	bool isGround;
 	bool lastJumpKey;
-	void Jump(); // ジャンプの処理
 	bool isJumping;
-
+	void Jump(); // ジャンプの処理
+	
 	//カメラのプレイヤー基準の座標
 	VECTOR cameraPos = VGet(0, 75, 0);
 	//視点移動 上限下限
 	const float rotXMin = -0.8f, rotXMax = 0.8f;
 
 	PlayersGun* gun;
+	void Attack();
+	bool lastHitKey;
+	const float coolTime = 0.5f;
+	float elapsedTime;
 
-	//HP
+	// ステータス
 	int hp;
 	const int InitHp = 100;
+	int atk = 10;
 
 	// アニメーション
 	Animation* animation;

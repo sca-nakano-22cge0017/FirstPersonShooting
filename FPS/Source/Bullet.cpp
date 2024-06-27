@@ -4,7 +4,7 @@
 #include "Stage.h"
 #include "Enemy.h"
 
-Bullet::Bullet(Gun* obj)
+Bullet::Bullet(Gun* obj, bool _canHitPlayer, bool _canHitEnemy)
 {
 	hModel = MV1LoadModel("data/Gun/Bullet1.mv1");
 
@@ -13,11 +13,19 @@ Bullet::Bullet(Gun* obj)
 
 	isColl = false;
 	dis = 0;
+	dirSize = 0;
+	dir = VGet(0, 0, 0);
+	diff = VGet(0, 0, 0);
 	position = VGet(0, 0, 0);
 	rotation = VGet(0, 0, 0);
 	modelPosition = VGet(0, 0, 0);
 	modelRotation = VGet(0, 0, 0);
-	matrix = MGetRotX(0) * MGetRotY(0) * MGetRotZ(0);
+	matrix = MGetIdent();
+
+	player = ObjectManager::FindGameObject<Player>();
+
+	canHitPlayer = _canHitPlayer;
+	canHitEnemy = _canHitEnemy;
 }
 
 Bullet::~Bullet()
@@ -54,6 +62,8 @@ void Bullet::Draw()
 		MV1SetRotationMatrix(hModel, matrix);
 		MV1DrawModel(hModel);
 	}
+
+	DrawFormatString(Screen::WIDTH - 200, 0, GetColor(255, 0, 0), "x= %f\ny= %f\nz= %f", position.x, position.y, position.z);
 }
 
 void Bullet::CollCheck()
@@ -70,22 +80,37 @@ void Bullet::CollCheck()
 			}
 		}
 	}
+	objects.clear();
 
-	enemies = ObjectManager::FindGameObjects<Enemy>();
-	for (Enemy* e : enemies)
+	if (canHitEnemy)
+	{
+		enemies = ObjectManager::FindGameObjects<Enemy>();
+		for (Enemy* e : enemies)
+		{
+			VECTOR hit;
+			if (e != nullptr) {
+				if (e->CollLine(position, position + VGet(10, 0, 0), &hit))
+				{
+					isColl = true;
+					attack = e->GetAtk();
+					e->Damage(attack);
+				}
+			}
+		}
+		enemies.clear();
+	}
+	
+	if (canHitPlayer)
 	{
 		VECTOR hit;
-		if (e != nullptr) {
-			if (e->CollLine(position, position + VGet(10, 0, 0), &hit))
+		if (player != nullptr)
+		{
+			if (player->CollLine(position, position + VGet(10, 0, 0), &hit))
 			{
 				isColl = true;
-
-				// ƒ_ƒ[ƒW‚ð—^‚¦‚é
-				e->Damage(attack);
+				attack = player->GetAtk();
+				player->Damage(attack);
 			}
 		}
 	}
-
-	objects.clear();
-	enemies.clear();
 }

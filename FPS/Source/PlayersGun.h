@@ -24,20 +24,14 @@ public:
 	int GetRestBullets() { return restBullets; }
 
 	float GetRange() override { return range; }
+	void SetRange(float r) override { range = r; }
 
 	void Fire() override;
 
 private:
+	VECTOR TargetAcquisition(VECTOR start, VECTOR target) override;
 	int fullBullets; //Å‘å’e”
 	int restBullets; //c’e”
-	bool lastHitKey;
-	const float coolTime = 1.0f;
-	float elapsedTime;
-
-	const float attack = 10; // UŒ‚—Í
-	const float range = 1500; // Ë’ö‹——£
-
-	VECTOR TargetAcquisition(VECTOR start, VECTOR target) override;
 
 	Player* player;
 	Camera* camera;

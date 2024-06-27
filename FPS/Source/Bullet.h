@@ -11,7 +11,13 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(Gun* obj);
+	/// <summary>
+	/// 銃弾生成
+	/// </summary>
+	/// <param name="obj">Gunクラスのポインタ</param>
+	/// <param name="_canHitPlayer">プレイヤーに当たるか</param>
+	/// <param name="_canHitEnemy">敵に当たるか</param>
+	Bullet(Gun* obj, bool _canHitPlayer, bool _canHitEnemy);
 	~Bullet();
 	void Update() override;
 	void Draw() override;
@@ -21,6 +27,18 @@ public:
 	/// </summary>
 	/// <param name="pos">生成位置</param>
 	void SetPosition(VECTOR pos) { position = pos; }
+
+	/// <summary>
+	/// モデル生成位置と実際の生成位置が異なる場合
+	/// </summary>
+	/// <param name="pos">生成位置</param>
+	/// <param name="modelPos">モデル生成位置</param>
+	void SetPosition(VECTOR pos, VECTOR modelPos)
+	{
+		position = pos;
+		modelPosition = modelPos;
+		diff = modelPosition - position;
+	}
 
 	/// <summary>
 	/// 銃弾の生成角度を代入する
@@ -38,22 +56,6 @@ public:
 		dir = targetPos - position;
 		dirSize = VSize(targetPos - modelPosition);
 	}
-
-	/// <summary>
-	/// 銃弾モデルの生成位置を代入する
-	/// </summary>
-	/// <param name="pos">生成位置</param>
-	void SetModelPosition(VECTOR pos)
-	{
-		modelPosition = pos;
-		diff = modelPosition - position;
-	}
-
-	/// <summary>
-	/// 銃弾モデルの生成角度を代入する
-	/// </summary>
-	/// <param name="pos">生成角度</param>
-	void SetModelRotation(VECTOR rot) { modelRotation = rot; }
 
 	/// <summary>
 	/// 銃弾モデルの生成角度を代入する
@@ -75,6 +77,8 @@ private:
 	/// </summary>
 	void CollCheck();
 	bool isColl;
+	bool canHitPlayer = false; // プレイヤーに当たるか
+	bool canHitEnemy = false;  // 敵に当たるか
 
 	VECTOR dir; //移動方向
 	VECTOR targetPos = VGet(0, 0, 0);
@@ -92,4 +96,5 @@ private:
 
 	std::list<StageObjects*> objects; // ステージ上のオブジェクト/障害物のリスト
 	std::list<Enemy*> enemies; // 敵のリスト
+	Player* player;
 };

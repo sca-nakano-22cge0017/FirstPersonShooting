@@ -45,7 +45,7 @@ bool EnemyAvoid::NeedEnable()
 
 	if (eObj->CanHitCheck())
 	{
-
+		
 	}
 
 	return false;
@@ -58,7 +58,7 @@ bool EnemyAvoid::Update()
 
 bool EnemyHide::NeedEnable()
 {
-	// プレイヤーが一定範囲内にいる場合、隠れる
+	// プレイヤーの射線上にいた場合　かつ　壁が近くにある場合は隠れる
 
 	// 敵の座標
 	NormalEnemy* eObj = dynamic_cast<NormalEnemy*>(object);
@@ -70,7 +70,7 @@ bool EnemyHide::NeedEnable()
 
 	if (VSquareSize(ePos - pPos) < 200 * 200)
 	{
-		return true;
+		//return true;
 	}
 
 	return false;
@@ -83,13 +83,56 @@ bool EnemyHide::Update()
 
 bool EnemyAttack::NeedEnable()
 {
-	// プレイヤーが射程範囲内にいれば射撃する
+	NormalEnemy* pEnemy = dynamic_cast<NormalEnemy*>(object);
+	VECTOR ePos = pEnemy->GetPosition();
+
+	Player* pPlayer = ObjectManager::FindGameObject<Player>();
+	VECTOR pPos = pPlayer->GetPosition();
+
+	VECTOR forward = VGet(0, 0, 1) * MGetRotY(pEnemy->GetRotation().y);
+	VECTOR dir = pPos - ePos;
+	float targetCos = VDot(VNorm(dir), VNorm(forward));
+
+	// プレイヤーが範囲内にいる　かつ　敵の前方にいる
+	if (VSquareSize(ePos - pPos) < 1000 * 1000 && targetCos <= -cos(DegToRad(45.0f)))
+	{
+		return true;
+	}
+
 	return false;
 }
 
 bool EnemyAttack::Update()
 {
-	return false;
+	NormalEnemy* pEnemy = dynamic_cast<NormalEnemy*>(object);
+	VECTOR ePos = pEnemy->GetPosition();
+
+	Player* pPlayer = ObjectManager::FindGameObject<Player>();
+	VECTOR pPos = pPlayer->GetPosition();
+
+	VECTOR eRot = pEnemy->GetRotation();
+	VECTOR forward = VGet(0, 0, 1) * MGetRotY(eRot.y);
+	VECTOR dir = VNorm(pPos - ePos);
+	float targetCos = VDot(dir, forward);
+	
+	if (VSquareSize(ePos - pPos) < 1000 * 1000 && targetCos <= -cos(DegToRad(45.0f)))
+	{
+		// 正面にいない場合は回転
+		if (targetCos >= -cos(DegToRad(10.0f)))
+		{
+			VECTOR right = VGet(1, 0, 0) * MGetRotY(eRot.y);
+			float ip = VDot(dir, right);
+			if (ip >= 0) pEnemy->RotateY(DegToRad(-1.0f));
+			else pEnemy->RotateY(DegToRad(1.0f));
+		}
+		else pEnemy->Attack();
+	}
+	else
+	{
+		// 範囲外・視野外に出たら攻撃状態解除
+		pEnemy->Idle();
+		return true;
+	}
 }
 
 Selector::Selector(GameObject* obj) : Node(obj)
@@ -102,7 +145,6 @@ Selector::Selector(GameObject* obj) : Node(obj)
 
 bool Selector::NeedEnable()
 {
-	// childrenを順番に見て、NeedEnableのものがあればtrue
 	for (Node* c : children)
 	{
 		if (c->NeedEnable())

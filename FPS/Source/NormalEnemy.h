@@ -18,7 +18,9 @@ public:
 	void SetRotation(VECTOR rot) override { rotation = rot; }
 	VECTOR GetPosition() override { return position; }
 	VECTOR GetRotation() override { return rotation; }
+	void RotateY(float angle) { rotation.y += angle; }
 
+	void Idle();
 	void Attack();
 
 	void Damage(int damage) override;
@@ -26,6 +28,7 @@ public:
 	// 地面判定
 	void GroundCheck() override;
 
+	int GetAtk() override { return atk; }
 	// プレイヤーの弾が当たるかどうかを設定・取得
 	void CanHitCheck(bool _isHit) override { isHit = _isHit; }
 	bool CanHitCheck() override { return isHit; }
@@ -70,13 +73,19 @@ private:
 		MAX
 	};
 	int hAnimation[MAX];
+	ANIM_ID nowAnim = A_NOTHING;
 
 	int hp;
 	const int initHp = 10; // 初期体力
 	int moveSpeed = 5; // 移動速度
+	int atk = 5;
 
-	Gun* gun = nullptr;
+	EnemiesGun* gun = nullptr;
 	bool attacking; // 攻撃中かどうか
+	bool lastAttack;
+	const float coolTime = 1.0f;
+	float elapsedTime;
+	void GunSet();
 
 	bool isHit; // プレイヤーの攻撃が当たるかどうか
 };

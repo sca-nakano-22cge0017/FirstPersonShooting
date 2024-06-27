@@ -10,6 +10,8 @@ NormalEnemy::NormalEnemy()
 
 	position = VGet(300, 75, 300);
 	rotation = VGet(0, 0, 0);
+	lastAttack = false;
+	elapsedTime = coolTime;
 	hp = initHp;
 	attacking = false;
 	isHit = false;
@@ -39,20 +41,13 @@ NormalEnemy::~NormalEnemy()
 
 void NormalEnemy::Update()
 {
+	ai->Update();
 	animation->Update(); //アニメーションの再生
 	MV1RefreshCollInfo(hModel); // コリジョン情報の更新
 
-	gun->SetPosition(position);
-
-	if (CheckHitKey(KEY_INPUT_C))
-	{
-		Attack();
-	}
-
 	GroundCheck();
 
-	if (hp <= 0)
-		DestroyMe();
+	if (hp <= 0) DestroyMe();
 }
 
 void NormalEnemy::Draw()
@@ -60,16 +55,34 @@ void NormalEnemy::Draw()
 	if (hModel != -1)
 	{
 		MV1SetPosition(hModel, position);
-
+		MV1SetRotationXYZ(hModel, rotation);
 		MV1DrawModel(hModel);
 	}
 }
 
+void NormalEnemy::Idle()
+{
+	animation->Play(hAnimation[A_IDLE], true);
+}
+
 void NormalEnemy::Attack()
 {
-	animation->Play(hAnimation[A_ATT], true);
+	elapsedTime += 1.0f / 60.0f;
 
-	gun->Fire();
+	if (elapsedTime >= coolTime)
+	{
+		if (!lastAttack)
+		{
+			//! プレイヤーの方を向く
+			//! 銃弾の生成タイミング調整
+
+			lastAttack = true;
+			animation->Play(hAnimation[A_ATT], true);
+			gun->Fire();
+			elapsedTime = 0;
+		}
+		else lastAttack = false;
+	}
 }
 
 void NormalEnemy::Damage(int damage)
@@ -105,4 +118,42 @@ void NormalEnemy::GroundCheck()
 	}
 
 	objects.clear();
+}
+
+void NormalEnemy::GunSet()
+{
+	// アニメーションに応じて銃の位置を調整
+
+	VECTOR pos = VGet(0, 0, 0);
+	VECTOR rot = VGet(0, 0, 0);
+
+	switch (nowAnim)
+	{
+	case A_IDLE:
+		break;
+	case A_WALK:
+		break;
+	case A_ATT:
+		break;
+	case A_TO_CROUCH:
+		break;
+	case A_TO_STAND:
+		break;
+	case A_DAMAGE:
+		break;
+	case A_DEAD:
+		break;
+	case A_HEADSHOT_FRONT:
+		break;
+	case A_HEADSHOT_BACK:
+		break;
+	default:
+		break;
+	}
+
+	if (gun != nullptr)
+	{
+		gun->SetRelativelyPos(pos);
+		gun->SetRelativelyRot(rot);
+	}
 }

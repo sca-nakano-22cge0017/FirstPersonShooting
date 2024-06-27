@@ -13,11 +13,15 @@ public:
 	virtual VECTOR GetRotation() { return rotation; }
 	virtual void SetRotation(VECTOR rot) {};
 
+	virtual void SetRelativelyPos(VECTOR pos) { relativelyPos = pos; }
+	virtual void SetRelativelyRot(VECTOR rot) { relativelyRot = rot; }
+
 	/// <summary>
 	/// Ë’ö‹——£æ“¾
 	/// </summary>
 	/// <returns>Ë’ö‹——£</returns>
 	virtual float GetRange() { return range; }
+	virtual void SetRange(float r) {};
 
 	/// <summary>
 	/// ”­–Cˆ—
@@ -37,16 +41,11 @@ protected:
 	VECTOR position = VGet(0, 0, 0);
 	VECTOR rotation = VGet(0, 0, 0);
 	MATRIX matrix = MGetIdent();
+	float range = 0; // Ë’ö‹——£
 
 	// e‚ğŠ‚·‚éƒLƒƒƒ‰ƒNƒ^[‚©‚çŒ©‚½‘Š‘Î“I‚ÈÀ•W
 	VECTOR relativelyPos = VGet(0, 0, 0);
 	VECTOR relativelyRot = VGet(0, 0, 0);
 
-	VECTOR targetPos = VGet(0, 0, 0); //’e‚Ì–Ú•WˆÊ’u
-
-	VECTOR bulletsCreatePos = VGet(0.0f, 20.0f, 0.0f); // e‚©‚çŒ©‚Äe’e‚ğ¶¬‚·‚éÀ•W
-
-private:
-	const float attack = 10; // UŒ‚—Í
-	const float range = 1500; // Ë’ö‹——£
+	VECTOR bulletsCreatePos = VGet(0.0f, 0.0f, 0.0f); // e‚©‚çŒ©‚Äe’e‚ğ¶¬‚·‚éÀ•W
 };
